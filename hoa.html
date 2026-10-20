@@ -208,6 +208,23 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
       <path d="M231,521 C228,527 228,532 224,536"/>
       <path d="M240,527 C245,529 248,534 253,535"/>
       <path d="M240,500 C245,498 249,500 254,497"/>
+      <path d="M160,490 C156,484 151,483 147,479"/>
+      <path d="M250,486 C254,480 259,479 262,474"/>
+      <path d="M201,530 C206,533 207,538 211,540"/>
+      <path d="M136,512 C131,514 128,519 124,520"/>
+      <path d="M272,506 C277,507 280,512 285,512"/>
+    </g>
+    <!-- extra roots of the same colour so the letters sit half-hidden in a natural tangle -->
+    <g stroke-width="2">
+      <path d="M200,470 C192,478 176,482 160,490 C150,495 142,503 136,512" stroke-width="2.4"/>
+      <path d="M200,470 C210,476 230,478 250,486 C260,490 266,498 272,506" stroke-width="2.4"/>
+      <path d="M200,470 C201,486 199,500 201,516 C202,530 198,542 200,556"/>
+      <path d="M186,516 C178,522 172,532 170,546" stroke-width="1.8"/>
+      <path d="M240,495 C250,502 256,512 260,526" stroke-width="1.8"/>
+      <path d="M214,541 C212,548 214,556 210,562" stroke-width="1.6"/>
+      <path d="M169,545 C172,552 170,558 174,564" stroke-width="1.4"/>
+      <path d="M223,502 C230,499 238,505 248,508" stroke-width="1.4"/>
+      <path d="M188,490 C180,494 176,500 168,502" stroke-width="1.4"/>
     </g>
   </g>
 
@@ -607,8 +624,11 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     seedR.setAttribute('transform', `translate(${crack * 7},0) rotate(${crack * 32},0,14)`);
     seed.setAttribute('opacity', 1 - prog(2.4, 3.4, t));
 
-    // the three letter strokes first, then the hair roots sprout one after another
-    roots.forEach(({ p, L }, i) => { p.style.strokeDashoffset = L * (1 - easeOut(prog(T.roots[0] + (i < 3 ? i * .15 : .5 + (i - 3) * .1), T.roots[1], t))); });
+    // the three letter strokes first, then the other roots sprout one after another
+    roots.forEach(({ p, L }, i) => {
+      const s0 = T.roots[0] + (i < 3 ? i * .15 : .4 + (i - 3) * .06);
+      p.style.strokeDashoffset = L * (1 - easeOut(prog(s0, s0 + 1.2, t)));
+    });
 
     const sp = easeInOut(prog(...T.stem, t));
     stem.style.strokeDashoffset = stemLen * (1 - sp);
