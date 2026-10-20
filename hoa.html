@@ -133,6 +133,26 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     <path id="star" d="M0,-6 L1.4,-1.4 L6,0 L1.4,1.4 L0,6 L-1.4,1.4 L-6,0 L-1.4,-1.4Z"/>
   </defs>
 
+  <!-- A small cream sun peeks out again after the rain. -->
+  <g id="sun" transform="translate(338,150)">
+    <circle id="sunHalo" r="35" fill="#fff3ba" opacity=".16"/>
+    <g id="sunCore">
+      <g id="sunRays" fill="none" stroke="#f4d88f" stroke-width="2.4" stroke-linecap="round">
+        <path d="M0,-24 v-5 M17,-17 l3.5,-3.5 M24,0 h5 M17,17 l3.5,3.5 M0,24 v5 M-17,17 l-3.5,3.5 M-24,0 h-5 M-17,-17 l-3.5,-3.5"/>
+      </g>
+      <circle r="19" fill="#fff0bd" stroke="#efd398" stroke-width="1.2"/>
+      <g fill="#f2b2a0" opacity=".65"><ellipse cx="-11" cy="4" rx="3.3" ry="1.9"/><ellipse cx="11" cy="4" rx="3.3" ry="1.9"/></g>
+      <g id="sunEyes" fill="none" stroke="#9b7853" stroke-width="1.6" stroke-linecap="round">
+        <path d="M-10,-1 Q-7,-5 -4,-1 M4,-1 Q7,-5 10,-1"/>
+      </g>
+      <path d="M-4,6 Q0,10 4,6" fill="none" stroke="#9b7853" stroke-width="1.4" stroke-linecap="round"/>
+    </g>
+    <g id="sunCover" fill="#f1f6fb" opacity="0">
+      <ellipse cx="0" cy="16" rx="32" ry="13"/><ellipse cx="-15" cy="8" rx="16" ry="13"/>
+      <ellipse cx="6" cy="3" rx="18" ry="16"/><ellipse cx="24" cy="12" rx="13" ry="11"/>
+    </g>
+  </g>
+
   <!-- sky: soft clouds drifting behind everything -->
   <g id="clouds"></g>
   <!-- pastel rainbow behind the seed once the rain clears -->
@@ -691,7 +711,21 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     $('rainCloud').setAttribute('transform', `translate(${lerp(110, 200, cIn) + cOut * 90},300)`);
     $('rainCloud').setAttribute('opacity', cIn * (1 - cOut));
     $('dim').setAttribute('opacity', .16 * cIn * (1 - cOut));
-    $('rainbow').setAttribute('opacity', .55 * easeInOut(prog(I.cloud[2], I.cloud[2] + .8, ot)) * (1 - easeInOut(prog(3, 4, t))));
+    // Clear after the shower, then a faint pastel arc remains behind the flower.
+    const clearSky = easeInOut(prog(I.cloud[2], I.cloud[2] + .8, ot));
+    const rainbowFade = easeInOut(prog(3, T.bloom[1], t));
+    $('rainbow').setAttribute('opacity', clearSky * lerp(.5, .14, rainbowFade));
+    const sunCloud = cIn * (1 - cOut);
+    const sunBloom = reduce ? 0 : Math.sin(prog(...T.bloom, t) * Math.PI);
+    const sunBlinkPhase = ot % 6.2;
+    const sunBlink = reduce || sunBlinkPhase > .45 ? 0 : Math.sin(sunBlinkPhase / .45 * Math.PI) ** 2;
+    $('sunCore').setAttribute('transform', `translate(0,${sunCloud * 9})`);
+    $('sunCover').setAttribute('opacity', sunCloud * .98);
+    $('sunCover').setAttribute('transform', `translate(${30 * (1 - sunCloud)},0)`);
+    $('sunHalo').setAttribute('opacity', (.16 + .16 * sunBloom) * (1 - sunCloud));
+    $('sunRays').setAttribute('opacity', 1 - .65 * sunCloud);
+    $('sunRays').setAttribute('transform', `scale(${1 + .08 * sunBloom})`);
+    $('sunEyes').setAttribute('transform', `translate(0,-1) scale(1,${1 - .9 * sunBlink}) translate(0,1)`);
     drops.forEach(d => {
       const y = 18 + ((ot * 1.7 + d.ph) % 1) * 177;
       d.l.setAttribute('x1', d.x); d.l.setAttribute('y1', y); d.l.setAttribute('x2', d.x - 2); d.l.setAttribute('y2', y + 10);
