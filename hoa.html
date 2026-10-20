@@ -84,9 +84,17 @@ button:focus-visible { outline: 3px solid var(--leaf); outline-offset: 2px; }
 .doodle.tr { right: 10px; transform: scaleX(-1); }
 
 
-/* intro: blank sheet with one line; the scene rises in after the tap */
+/* Storybook opening, followed by the illustrated scene. */
 #intro { position: fixed; inset: 0; display: grid; place-items: center; pointer-events: none;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+#storyIntro { position: absolute; inset: 0; display: grid; place-items: center; color: #795643;
+  font: 600 clamp(32px, 7.5vw, 48px)/1.35 var(--display); text-align: center; }
+#storyIntro p { grid-area: 1 / 1; margin: 0; padding: 24px; max-width: min(90vw, 640px); opacity: 0; }
+#storyIntro span { display: inline-block; opacity: 0; }
+#storyIntro::before, #storyIntro::after { content: '✧'; position: absolute; color: #d6b66b; font-size: 19px;
+  animation: twinkle 3s ease-in-out infinite; }
+#storyIntro::before { left: calc(50% - 135px); top: calc(50% - 65px); }
+#storyIntro::after { left: calc(50% + 115px); top: calc(50% + 48px); animation-delay: -1.5s; }
 #stage svg, #bg { opacity: 0; transform: translateY(26px); transition: opacity 1.4s ease, transform 1.7s cubic-bezier(.2, .8, .2, 1); }
 body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
 .spark { position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; margin: -3.5px; border-radius: 50%;
@@ -95,7 +103,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
 @keyframes burst { to { transform: translate(var(--x), var(--y)) scale(.2); opacity: 0; } }
 @keyframes twinkle { 0%, 100% { opacity: .6; } 50% { opacity: 1; } }
 
-@media (prefers-reduced-motion: reduce) { #hint, #replay { animation: none; } .bp { display: none; } }
+@media (prefers-reduced-motion: reduce) { #hint, #replay, #storyIntro::before, #storyIntro::after { animation: none; } #storyIntro span { transform: none !important; } .bp { display: none; } }
 </style>
 </head>
 <body>
@@ -343,6 +351,10 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
 <div id="vignette"></div>
 <div id="intro">
   <div id="hint">Bấm vào đây,<br>điều kì diệu sẽ diễn ra ✨</div>
+  <div id="storyIntro" lang="en" role="status" hidden>
+    <p><span>Once</span> <span>upon</span> <span>a</span> <span>time…</span></p>
+    <p><span>There</span> <span>was</span> <span>a</span> <span>little</span> <span>cat…</span></p>
+  </div>
 </div>
 <button id="replay" type="button" hidden>Xem lại</button>
 
@@ -568,13 +580,16 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   let start = null;
   const hint = $('hint'), replay = $('replay'), vignette = $('vignette');
 
+  const STORY_LEAD = 5.2;
+  const storyIntro = $('storyIntro');
+  const storyLines = [...storyIntro.querySelectorAll('p')].map(line => ({ line, words: [...line.querySelectorAll('span')] }));
   let opened = false, openAt = 0, openTimer;
-  // the one tap: the line bursts into sparks, the scene rises in, the seed drops, then it grows on its own
+  // One tap starts the two story lines, then the original planting sequence.
   function open() {
     if (opened) return;
-    opened = true; openAt = performance.now();
+    opened = true; openAt = performance.now() + STORY_LEAD * 1000;
     hint.classList.add('gone');
-    document.body.classList.add('open');
+    storyIntro.hidden = false;
     for (let i = 0; i < 18; i++) {
       const sp = document.createElement('i'), a = Math.random() * Math.PI * 2, r = 80 + Math.random() * 120;
       sp.className = 'spark' + (i % 2 ? ' pink' : '');
@@ -582,7 +597,10 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
       $('intro').appendChild(sp);
       setTimeout(() => sp.remove(), 1200);
     }
-    openTimer = setTimeout(bloom, I.end * 1000);
+    openTimer = setTimeout(() => {
+      document.body.classList.add('open');
+      openTimer = setTimeout(bloom, I.end * 1000);
+    }, STORY_LEAD * 1000);
   }
   function bloom() {
     if (start !== null) return;
@@ -600,6 +618,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     replay.hidden = true;
     hint.classList.remove('gone');
     opened = false; clearTimeout(openTimer);
+    storyIntro.hidden = true;
     document.body.classList.remove('open');
   }
   $('stage').addEventListener('click', open);
@@ -621,7 +640,18 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     const t = start === null ? 0 : (now - start) / 1000;
     const idle = now / 1000;
 
-    const ot = opened ? (now - openAt) / 1000 : 0;
+    const ot = opened ? Math.max(0, (now - openAt) / 1000) : 0;
+    const storyTime = opened ? (now - openAt) / 1000 + STORY_LEAD : -1;
+    storyIntro.hidden = !opened || storyTime > STORY_LEAD + .5;
+    storyLines.forEach(({ line, words }, i) => {
+      const appear = i === 0 ? .55 : 3, disappear = i === 0 ? 2.5 : 4.9;
+      line.style.opacity = easeOut(prog(appear, appear + .5, storyTime)) * (1 - easeInOut(prog(disappear, disappear + .55, storyTime)));
+      words.forEach((word, j) => {
+        const shown = easeOut(prog(appear + j * .13, appear + j * .13 + .45, storyTime));
+        word.style.opacity = shown;
+        word.style.transform = `translateY(${reduce ? 0 : (1 - shown) * 6}px)`;
+      });
+    });
 
     // kitten: waddles in, dips its head to set the seed down, steps back and curls up looking at the flower
     // The second butterfly rests on an ear, then a twitch sends it back to the flower.
