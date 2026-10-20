@@ -99,6 +99,11 @@ button:focus-visible { outline: 3px solid var(--leaf); outline-offset: 2px; }
   background: linear-gradient(105deg, transparent 35%, #fffdf1 49%, #ffe7a5 52%, transparent 65%);
   background-size: 250% 100%; background-position: var(--gleam, 100%) 0;
   -webkit-background-clip: text; background-clip: text; opacity: .75; }
+#jnLogo { position: absolute; left: 50%; bottom: calc(50% + 64px); transform: translateX(-50%);
+  width: clamp(160px, 36vw, 220px); height: auto; overflow: visible; opacity: 0;
+  filter: drop-shadow(0 0 8px #efce8f44); }
+#jnLogo path { stroke-linecap: round; stroke-linejoin: round; }
+#jnLogoStar { fill: #fff5cd; filter: drop-shadow(0 0 4px #f5d68a); }
 #storyMagic { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 #storyWand { fill: #fff9df; filter: drop-shadow(0 0 4px #fff5c1) drop-shadow(0 0 12px #ebc77d); }
 #stage svg, #bg { opacity: 0; transform: translateY(26px); transition: opacity 1.4s ease, transform 1.7s cubic-bezier(.2, .8, .2, 1); }
@@ -364,6 +369,20 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
       <g id="storyDust"></g>
       <path id="storyWand" d="M0,-7 L1.5,-1.5 L7,0 L1.5,1.5 L0,7 L-1.5,1.5 L-7,0 L-1.5,-1.5Z"/>
     </svg>
+    <svg id="jnLogo" viewBox="0 0 280 160" role="img" aria-label="JN">
+      <defs>
+        <linearGradient id="gJNGold" x1="0" y1="0" x2=".35" y2="1">
+          <stop offset="0" stop-color="#fff9e6"/><stop offset=".6" stop-color="#f6e3b5"/><stop offset="1" stop-color="#dcb878"/>
+        </linearGradient>
+      </defs>
+      <g fill="none" stroke="url(#gJNGold)">
+        <path id="jnArc" d="M38,80 C43,7 186,-14 242,63" stroke-width="1.5" opacity=".65"/>
+        <path id="jnLetterJ" d="M60,69 C63,51 103,43 126,50 C142,55 136,65 120,63 C120,84 117,111 105,125 C92,142 68,136 65,124 C62,114 75,106 82,113" stroke-width="6"/>
+        <path id="jnLetterN" d="M137,123 C143,103 142,78 149,57 C153,53 155,68 160,78 C170,98 179,111 188,120 C191,96 195,70 205,56 C212,46 221,53 214,61" stroke-width="5.5"/>
+        <path id="jnUnderline" d="M76,141 C115,130 162,137 204,125" stroke-width="1.6" opacity=".7"/>
+      </g>
+      <path id="jnLogoStar" d="M242,56 L243.5,61.5 L249,63 L243.5,64.5 L242,70 L240.5,64.5 L235,63 L240.5,61.5Z" opacity="0"/>
+    </svg>
     <p><span class="storyText" data-text="Once upon a time…">Once upon a time…</span></p>
     <p><span class="storyText" data-text="There was a little cat…">There was a little cat…</span></p>
   </div>
@@ -595,6 +614,14 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   const STORY_LEAD = 7.4;
   const storyIntro = $('storyIntro');
   const storyLines = [...storyIntro.querySelectorAll('p')].map(line => ({ line, text: line.querySelector('.storyText') }));
+  const logoStrokes = [
+    { path: $('jnArc'), from: .2, to: 1.7 }, { path: $('jnLetterJ'), from: .15, to: 1.25 },
+    { path: $('jnLetterN'), from: .45, to: 1.65 }, { path: $('jnUnderline'), from: 1.2, to: 2 },
+  ].map(stroke => {
+    const length = stroke.path.getTotalLength();
+    stroke.path.setAttribute('stroke-dasharray', length);
+    return { ...stroke, length };
+  });
   const storyStars = Array.from({ length: 18 }, (_, i) => {
     const star = mk('circle', { cx: (8 + i * 37 % 85) + '%', cy: (9 + i * 19 % 80) + '%', r: i % 3 === 0 ? 1.3 : .7 });
     $('storyStars').appendChild(star); return star;
@@ -628,6 +655,9 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     const dawn = easeInOut(prog(6.7, 8.8, time));
     storyIntro.style.opacity = easeOut(prog(0, .65, time));
     $('storyBackdrop').style.opacity = 1 - dawn;
+    $('jnLogo').style.opacity = easeOut(prog(.1, .65, time)) * (1 - easeInOut(prog(6.6, 7.5, time)));
+    logoStrokes.forEach(({ path, from, to, length }) => path.setAttribute('stroke-dashoffset', reduce ? 0 : length * (1 - easeInOut(prog(from, to, time)))));
+    $('jnLogoStar').setAttribute('opacity', easeOut(prog(1.25, 1.7, time)) * .95);
     const boxes = storyLines.map(({ text }) => text.getBoundingClientRect());
     storyLines.forEach(({ line, text }, i) => {
       const appear = i === 0 ? .8 : 4, written = i === 0 ? 2.4 : 5.8, disappear = i === 0 ? 3.2 : 6.6;
