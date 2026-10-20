@@ -174,6 +174,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
       </g>
       <g id="catHead">
         <g id="catEars">
+        <circle id="catEarTip" cx="14" cy="-18" r="0"/>
         <path d="M-17,-6 C-18,-13 -17,-20 -13,-20 C-10,-20 -6,-15 -5,-12Z M5,-12 C8,-16 12,-20 15,-19 C18,-17 18,-10 17,-5Z" fill="#a9acb8"/>
         <path d="M-14,-10 Q-15,-17 -13,-17 Q-10,-16 -8,-12Z M9,-12 Q14,-18 15,-16 L15,-9Z" fill="#f7b9c6" stroke="none"/>
         </g>
@@ -199,6 +200,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
           </g>
         </g>
         <path id="catBlink" d="M-8,-1 Q-3.5,1 1,-1 M6,-1.5 Q10.5,.5 15,-1.5" fill="none" stroke="#2b2230" stroke-width="1.5" stroke-linecap="round" opacity="0"/>
+        <path id="catSleepEyes" d="M-8,-1 Q-3.5,2 1,-1 M6,-1.5 Q10.5,1.5 15,-1.5" fill="none" stroke="#2b2230" stroke-width="1.5" stroke-linecap="round" opacity="0"/>
         <path id="catSneeze" d="M-7,-4 L-2,-1 L-7,1 M14,-4 L9,-1 L14,1" fill="none" stroke="#2b2230" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0"/>
         <g id="catSparkle" fill="#fffdf0" stroke="none" opacity="0">
           <path d="M-10,-10 l1,2.8 2.8,1 -2.8,1 -1,2.8 -1,-2.8 -2.8,-1 2.8,-1Z"/>
@@ -216,6 +218,17 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
       </g>
     </g>
     <g fill="#a9acb8"><g class="leg"><rect x="-4.5" y="0" width="9" height="9" rx="4.5"/><ellipse cx="0" cy="7" rx="4.3" ry="2.2" fill="#fff" stroke="none"/><ellipse cx="0" cy="7.6" rx="1.9" ry="1.1" fill="#f7a1b4" stroke="none"/></g><g class="leg"><rect x="-4.5" y="0" width="9" height="9" rx="4.5"/><ellipse cx="0" cy="7" rx="4.3" ry="2.2" fill="#fff" stroke="none"/><ellipse cx="0" cy="7.6" rx="1.9" ry="1.1" fill="#f7a1b4" stroke="none"/></g></g>
+    <!-- The tail curls around the tucked paws as the kitten settles. -->
+    <g id="catSleepTail" fill="none" stroke-linecap="round" opacity="0">
+      <path d="M-20,-14 C-36,-10 -31,4 -12,4 C3,5 14,0 9,-6" stroke-width="10"/>
+      <path d="M-20,-14 C-36,-10 -31,4 -12,4 C3,5 14,0 9,-6" stroke="#a9acb8" stroke-width="7.5"/>
+      <path d="M2,3 C10,1 12,-2 9,-6" stroke="#fff" stroke-width="7.5"/>
+    </g>
+    <g id="catSleepZ" fill="#8a6670" stroke="none" font-family="var(--body)" opacity="0" aria-hidden="true">
+      <text x="35" y="-23" font-size="6">z</text>
+      <text x="40" y="-33" font-size="8">z</text>
+      <text x="47" y="-45" font-size="10">z</text>
+    </g>
   </g>
 
   <!-- Uneven, branching roots grow first; a few later turns quietly suggest JN. -->
@@ -338,7 +351,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     return { l, x: -60 + Math.random() * 120, ph: Math.random() };
   });
 
-  const T = { crack: [.5, 1.2], roots: [.8, 2.2], stem: [1.0, 4.0], bud: [3.7, 4.7], bloom: [4.7, 7.6], after: 7.2, done: 14.2 };
+  const T = { crack: [.5, 1.2], roots: [.8, 2.2], stem: [1.0, 4.0], bud: [3.7, 4.7], bloom: [4.7, 7.6], after: 7.2, done: 27.4 };
 
   /* stem and leaves */
   const stem = $('stem'), stemLen = stem.getTotalLength();
@@ -585,6 +598,11 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     const ot = opened ? (now - openAt) / 1000 : 0;
 
     // kitten: waddles in, dips its head to set the seed down, steps back and curls up looking at the flower
+    // The second butterfly rests on an ear, then a twitch sends it back to the flower.
+    const earLand = easeInOut(prog(19.8, 20.6, t)) * (1 - easeInOut(prog(22.15, 22.9, t)));
+    const earTwitch = reduce ? 0 : Math.sin(prog(22.15, 22.65, t) * Math.PI * 2) * 13;
+    const sleep = easeInOut(prog(23.5, 26.5, t));
+    const breath = reduce ? 0 : Math.sin((t - 23.5) * 1.7) * .014 * sleep;
     const walk = easeInOut(prog(...I.walk, ot)), back = easeInOut(prog(...I.back, ot)), lie = easeInOut(prog(...I.lie, ot));
     const cx = lerp(lerp(-150, 170, walk), 100, back), cy = groundY(cx) - 2;
     const digging = ot > I.dig[0] && ot < I.dig[1], covering = ot > I.cover[0] && ot < I.cover[1];
@@ -605,7 +623,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     const sit = easeInOut(prog(1.0, 2.0, t)), look = easeInOut(prog(1.5, 4.5, t));
     const happy = t > 7.4;
     const tilt = reduce ? 0 : (5 + Math.sin(t * 1.1) * 4) * prog(T.after, T.after + 1, t);
-    const up = lie * 6 - sit * 2 + wet * 1.5 + (moving ? -Math.abs(step) * 1.5 : 0);
+    const up = (lie * 6 - sit * 2 + wet * 1.5 + (moving ? -Math.abs(step) * 1.5 : 0)) * (1 - sleep);
     // the pink butterfly lands on its nose after the writing; the cat ducks a little and blushes
     const land = easeInOut(prog(14.4, 15.2, t)) * (1 - easeInOut(prog(16.85, 17.3, t)));
     const sniff = reduce ? 0 : Math.sin(t * 22) * 2 * prog(16, 16.6, t) * (1 - prog(16.8, 16.9, t));
@@ -615,8 +633,8 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     const pu = t > T.after + 1 && !reduce ? ((t - T.after - 1) % 6) / 6 : -1;
     const glance = pu < 0 ? 0 : easeInOut(prog(.4, .5, pu)) * (1 - easeInOut(prog(.75, .85, pu)));
     const puzzled = easeInOut(prog(17.45, 17.7, t)) * (1 - easeInOut(prog(19, 19.5, t)));
-    const headA = lerp(0, 32, easeInOut(prog(...I.dip, ot))) * (1 - easeInOut(prog(I.back[0], I.back[0] + .4, ot))) - 12 * lie - 22 * look + tilt + 6 * land + sniff + 22 * sneeze + purr + 14 * glance + nod + 7 * wet + 11 * puzzled;
-    $('catEars').setAttribute('transform', `rotate(${earFlick},0,-10)`);
+    const headA = lerp(0, 32, easeInOut(prog(...I.dip, ot))) * (1 - easeInOut(prog(I.back[0], I.back[0] + .4, ot))) - 12 * lie - 22 * look + tilt + 6 * land + sniff + 22 * sneeze + purr * (1 - sleep) + 14 * glance * (1 - sleep) + nod + 7 * wet + 11 * puzzled - 5 * earLand;
+    $('catEars').setAttribute('transform', `rotate(${earFlick + earTwitch},0,-10)`);
     $('catMud').setAttribute('opacity', .85 * prog(5.1, 5.8, ot) * (1 - prog(9.65, 10.15, ot)));
     $('catWipe').setAttribute('opacity', wipe);
     $('catWipe').setAttribute('transform', `rotate(${reduce ? 0 : Math.sin(ot * 18) * 12 * wipe},-8,16)`);
@@ -624,8 +642,8 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     $('catBlush').setAttribute('opacity', .75 + .25 * land);
     $('catBlush').setAttribute('fill', land > .5 ? '#f27f9c' : '#f7a1b4');
     $('cat').setAttribute('transform', `translate(${cx},${cy}) scale(${CAT})`);
-    $('catBody').setAttribute('transform', `rotate(${reduce || !digging ? 0 : Math.sin(ot * 14) * 4},13,-20)`);
-    $('catUp').setAttribute('transform', `translate(0,${up}) rotate(${(moving ? step * 4 : 0) - 16 * sit + 8 * lean},${sit || lean ? -20 : 0},${sit || lean ? -8 : -10})`);
+    $('catBody').setAttribute('transform', `translate(0,-3) scale(${1 + .08 * sleep},${1 - .17 * sleep + breath}) translate(0,3) rotate(${reduce || !digging ? 0 : Math.sin(ot * 14) * 4},13,-20)`);
+    $('catUp').setAttribute('transform', `translate(0,${up}) rotate(${((moving ? step * 4 : 0) - 16 * sit + 8 * lean) * (1 - sleep)},${sit || lean ? -20 : 0},${sit || lean ? -8 : -10})`);
     catLegs.forEach((leg, i) => {
       const front = i === 1 || i === 3;
       // sitting: front legs stretch down from the raised chest; back legs drop from the rump to stand on the ground
@@ -633,22 +651,28 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
       const k = lerp(lerp(1, .25, lie), front ? 1.45 : .64, sit) * (front ? lerp(1, .64, lean) : 1);
       const y = lerp(-9 + lie * 5, front ? -14 : -6, sit) + (front ? 4 * lean : 0);
       const rot = front && lean > 0 ? lerp(swing, i === 1 ? scratch : -scratch, lean) : i === 0 || i === 3 ? swing : -swing;
-      leg.setAttribute('opacity', i === 3 ? 1 - wipe : 1);
-      leg.setAttribute('transform', `translate(${LEG_X[i]},${y}) rotate(${rot - (i === 3 ? reach * 72 : 0)}) scale(1,${k * (1 + (i === 3 ? reach * .35 : 0))})`);
+      leg.setAttribute('opacity', (i === 3 ? 1 - wipe : 1) * (1 - .85 * sleep));
+      leg.setAttribute('transform', `translate(${lerp(LEG_X[i], LEG_X[i] * .6, sleep)},${lerp(y, -3, sleep)}) rotate(${(rot - (i === 3 ? reach * 72 : 0)) * (1 - sleep)}) scale(1,${lerp(k * (1 + (i === 3 ? reach * .35 : 0)), .2, sleep)})`);
     });
-    $('catHead').setAttribute('transform', `translate(18,-36) rotate(${headA}) scale(1.2,1.17)`);
+    $('catHead').setAttribute('transform', `translate(${lerp(18, 13, sleep)},${lerp(-36, -17, sleep) - breath * 8}) rotate(${lerp(headA, -5, sleep)}) scale(${lerp(1.2, 1.1, sleep)},${lerp(1.17, 1.05, sleep)})`);
     const wag = reduce ? 0 : pk >= 0 && pk < 1 ? Math.sin(idle * 12) * 16 : digging ? Math.sin(ot * 8) * 13 : happy ? Math.sin(idle * 2.8) * 10 : Math.sin(idle * 2.4) * 8;
-    $('catTail').setAttribute('transform', `rotate(${wag},-19,-18)`);
+    $('catTail').setAttribute('transform', `rotate(${wag * (1 - sleep)},-19,-18)`);
+    $('catTail').setAttribute('opacity', 1 - sleep);
+    $('catSleepTail').setAttribute('opacity', sleep);
+    $('catSleepTail').setAttribute('transform', `translate(0,${-breath * 5}) scale(${lerp(.85, 1, sleep)},1)`);
+    $('catSleepZ').setAttribute('opacity', sleep * (reduce ? .65 : .55 + .2 * Math.sin(t * 1.2)));
+    $('catSleepZ').setAttribute('transform', `translate(0,${reduce ? 0 : -3 * (1 + Math.sin(t * 1.2))})`);
     const blinkPhase = ot % 4.6;
     const blink = reduce || blinkPhase > .38 ? 0 : Math.sin(Math.PI * blinkPhase / .38) ** 2;
-    const curious = land > .15 || puzzled > .1, smiling = happy && !curious;
+    const curious = land > .15 || puzzled > .1 || earLand > .15, smiling = happy && !curious;
     const squint = sneeze > .2;
     $('catEyes').setAttribute('transform', `translate(0,-1) scale(1,${1 - .96 * blink}) translate(0,1)`);
-    $('catEyes').setAttribute('opacity', smiling || squint ? 0 : 1);
-    $('catEyeL').setAttribute('transform', `translate(${1.5 * land + 1.1 * puzzled},${1.1 * land - .8 * puzzled})`);
-    $('catEyeR').setAttribute('transform', `translate(${-1.8 * land + .8 * puzzled},${1.4 * land - .8 * puzzled})`);
-    $('catBlink').setAttribute('opacity', !smiling && !squint ? blink : 0);
-    $('catHappy').setAttribute('opacity', smiling && !squint ? 1 : 0);
+    $('catEyes').setAttribute('opacity', smiling || squint ? 0 : 1 - sleep);
+    $('catEyeL').setAttribute('transform', `translate(${1.5 * land + 1.1 * puzzled},${1.1 * land - .8 * puzzled - 1.2 * earLand})`);
+    $('catEyeR').setAttribute('transform', `translate(${-1.8 * land + .8 * puzzled},${1.4 * land - .8 * puzzled - 1.2 * earLand})`);
+    $('catBlink').setAttribute('opacity', !smiling && !squint ? blink * (1 - sleep) : 0);
+    $('catSleepEyes').setAttribute('opacity', sleep);
+    $('catHappy').setAttribute('opacity', smiling && !squint ? 1 - sleep : 0);
     $('catSneeze').setAttribute('opacity', squint ? 1 : 0);
     $('catMouth').setAttribute('d', squint ? 'M5,6 Q7,4 9,6 Q10,10 7,10 Q4,10 5,6Z' : 'M4,6 Q5.5,8 7,6 Q8.5,8 10,6');
     const mouth = ptIn($('catHead'), 8, 9);
@@ -781,6 +805,12 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
         const nose = ptIn($('catNose'), 7, 1);
         x = lerp(x, nose.x, land); y = lerp(y, nose.y - 8, land);
         flap = lerp(flap, .3 + .15 * Math.sin(idle * 3), land); rot = lerp(rot, 0, land); sc = lerp(sc, .8, land);
+      }
+      if (i === 1 && earLand > 0) {
+        const ear = ptIn($('catEarTip'), 14, -18);
+        x = lerp(x, ear.x, earLand); y = lerp(y, ear.y - 7, earLand);
+        flap = lerp(flap, reduce ? .6 : .25 + .1 * Math.sin(idle * 3), earLand);
+        rot = lerp(rot, -12 + earTwitch, earLand); sc = lerp(sc, .75, earLand);
       }
       b.L.setAttribute('transform', `scale(${flap},1)`);
       b.R.setAttribute('transform', `scale(${-flap},1)`);
