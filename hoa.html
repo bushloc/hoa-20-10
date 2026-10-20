@@ -88,8 +88,8 @@ button:focus-visible { outline: 3px solid var(--leaf); outline-offset: 2px; }
 #intro { position: fixed; inset: 0; display: grid; place-items: center; pointer-events: none;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 #storyIntro { position: absolute; inset: 0; display: grid; place-items: center; overflow: hidden;
-  background: radial-gradient(ellipse at 48% 48%, #293f65 0%, #182b4a 48%, #101c35 100%);
   color: #fff3d6; font: 600 clamp(32px, 7.5vw, 50px)/1.4 var(--display); text-align: center; opacity: 0; }
+#storyBackdrop { position: absolute; inset: 0; background: radial-gradient(ellipse at 48% 48%, #293f65 0%, #182b4a 48%, #101c35 100%); }
 #storyIntro p { grid-area: 1 / 1; position: relative; margin: 0; padding: 20px; max-width: 92vw; opacity: 0; }
 #storyIntro .storyText { position: relative; display: inline-block; white-space: nowrap;
   text-shadow: 0 0 5px #ffe2a066, 0 0 24px #e4ba6c44;
@@ -358,6 +358,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
 <div id="intro">
   <div id="hint">Bấm vào đây,<br>điều kì diệu sẽ diễn ra ✨</div>
   <div id="storyIntro" lang="en" role="status" hidden>
+    <div id="storyBackdrop" aria-hidden="true"></div>
     <svg id="storyMagic" aria-hidden="true">
       <g id="storyStars" fill="#fff4d2"></g>
       <g id="storyDust"></g>
@@ -622,25 +623,30 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     }, STORY_LEAD * 1000);
   }
   function renderStory(time) {
-    storyIntro.hidden = !opened || time > STORY_LEAD + 1;
+    storyIntro.hidden = !opened || time > STORY_LEAD + 4.5;
     if (storyIntro.hidden) return;
-    const dawn = easeInOut(prog(6.7, 8.2, time));
-    storyIntro.style.opacity = easeOut(prog(0, .65, time)) * (1 - dawn);
+    const dawn = easeInOut(prog(6.7, 8.8, time));
+    storyIntro.style.opacity = easeOut(prog(0, .65, time));
+    $('storyBackdrop').style.opacity = 1 - dawn;
     const boxes = storyLines.map(({ text }) => text.getBoundingClientRect());
     storyLines.forEach(({ line, text }, i) => {
       const appear = i === 0 ? .8 : 4, written = i === 0 ? 2.4 : 5.8, disappear = i === 0 ? 3.2 : 6.6;
-      const reveal = prog(appear, written, time);
+      const reveal = easeInOut(prog(appear, written, time));
       line.style.opacity = easeOut(prog(appear, appear + .35, time)) * (1 - easeInOut(prog(disappear, disappear + .6, time)));
       // Reveal the intact cursive text with a feathered mask, preserving its joined strokes.
       text.style.setProperty('--ink', (reduce ? 110 : lerp(-5, 110, reveal)) + '%');
       text.style.setProperty('--gleam', lerp(120, -20, prog(appear, written + 1, time)) + '%');
     });
-    storyStars.forEach((star, i) => star.setAttribute('opacity', reduce ? .35 : .2 + .35 * (1 + Math.sin(time * .9 + i * 2.3)) / 2));
+    storyStars.forEach((star, i) => star.setAttribute('opacity', (reduce ? .35 : .2 + .35 * (1 + Math.sin(time * .9 + i * 2.3)) / 2) * (1 - dawn)));
+    const matrix = svgEl.getScreenCTM();
+    const landing = new DOMPoint(50, groundY(50) - 70).matrixTransform(matrix);
+    const catCrown = ptIn($('catHead'), -8, -20);
+    const crown = new DOMPoint(catCrown.x, catCrown.y).matrixTransform(matrix);
     const pointAt = at => {
       const first = boxes[0], second = boxes[1];
       const midY = box => box.top + box.height * .55;
       if (at <= 2.4) {
-        const p = prog(.8, 2.4, at);
+        const p = easeInOut(prog(.8, 2.4, at));
         return { x: first.left + first.width * p, y: midY(first) - Math.sin(p * Math.PI) * 12 };
       }
       if (at < 4) {
@@ -648,15 +654,19 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
         return { x: lerp(first.right, second.left, p), y: lerp(midY(first), midY(second), p) - Math.sin(p * Math.PI) * 65 };
       }
       if (at <= 5.8) {
-        const p = prog(4, 5.8, at);
+        const p = easeInOut(prog(4, 5.8, at));
         return { x: second.left + second.width * p, y: midY(second) - Math.sin(p * Math.PI) * 12 };
       }
-      const p = easeInOut(prog(5.8, 7.9, at));
-      const scale = Math.min(innerWidth / 400, innerHeight / 640);
-      return { x: lerp(second.right, (innerWidth - 400 * scale) / 2 + 60 * scale, p),
-        y: lerp(midY(second), (innerHeight - 640 * scale) / 2 + 465 * scale, p) - Math.sin(p * Math.PI) * 45 };
+      // Use the displayed SVG matrix, including its entrance motion and letterboxing.
+      const p = easeInOut(prog(5.8, 10.3, at)), q = 1 - p;
+      const start = { x: second.right, y: midY(second) };
+      const bend = Math.min(innerWidth * .15, 75);
+      const x = q ** 3 * start.x + 3 * q * q * p * (start.x + bend) + 3 * q * p * p * (landing.x + bend) + p ** 3 * landing.x;
+      const y = q ** 3 * start.y + 3 * q * q * p * (start.y + 25) + 3 * q * p * p * (landing.y - 65) + p ** 3 * landing.y;
+      const follow = easeInOut(prog(9.8, 10.8, at));
+      return { x: lerp(x, crown.x, follow), y: lerp(y, crown.y, follow) };
     };
-    const magic = reduce ? 0 : prog(.65, .9, time) * (1 - prog(7.4, 8.1, time));
+    const magic = reduce ? 0 : easeInOut(prog(.65, .9, time)) * (1 - easeInOut(prog(11, 11.7, time)));
     const tip = pointAt(time);
     $('storyWand').setAttribute('opacity', magic);
     $('storyWand').setAttribute('transform', `translate(${tip.x},${tip.y}) rotate(${time * 18})`);
@@ -707,8 +717,6 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
 
     const ot = opened ? Math.max(0, (now - openAt) / 1000) : 0;
     const storyTime = opened ? (now - openAt) / 1000 + STORY_LEAD : -1;
-    renderStory(storyTime);
-
     // kitten: waddles in, dips its head to set the seed down, steps back and curls up looking at the flower
     // The second butterfly rests on an ear, then a twitch sends it back to the flower.
     const earLand = easeInOut(prog(19.8, 20.6, t)) * (1 - easeInOut(prog(22.15, 22.9, t)));
@@ -787,6 +795,8 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     $('catSneeze').setAttribute('opacity', squint ? 1 : 0);
     $('catMouth').setAttribute('d', squint ? 'M5,6 Q7,4 9,6 Q10,10 7,10 Q4,10 5,6Z' : 'M4,6 Q5.5,8 7,6 Q8.5,8 10,6');
     const mouth = ptIn($('catHead'), 8, 9);
+    // Update the light after the cat transforms so its landing point never lags a frame.
+    renderStory(storyTime);
 
     // the hole opens as it digs and is covered by a mound once the seed is in
     const holeK = easeOut(prog(I.dig[0] + .2, I.dig[1], ot)), mound = easeOut(prog(...I.cover, ot));
