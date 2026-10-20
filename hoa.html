@@ -137,6 +137,8 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
 
   <!-- sky: soft clouds drifting behind everything -->
   <g id="clouds"></g>
+  <!-- pastel rainbow behind the seed once the rain clears -->
+  <g id="rainbow" fill="none" stroke-width="6" opacity="0"></g>
 
   <circle id="glow" cx="200" cy="200" r="235" fill="url(#gGlow)" opacity="0"/>
 
@@ -175,7 +177,8 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
         <ellipse cx="0" cy="0" rx="18" ry="15.5" fill="#a9acb8"/>
         <path d="M-3,-14 L-2,-9.5 M1,-15 L1,-10.5 M5,-14 L4,-9.5" fill="none" stroke="#7f8290" stroke-width="1.6" stroke-linecap="round"/>
         <ellipse cx="6" cy="5.5" rx="9" ry="6.5" fill="#fff" stroke="none"/>
-        <g fill="#f7a1b4" opacity=".75" stroke="none"><ellipse cx="-7" cy="5" rx="2.8" ry="1.7"/><ellipse cx="14.5" cy="4.5" rx="2.4" ry="1.6"/></g>
+        <circle id="catNose" cx="7" cy="1" r="0"/>
+        <g id="catBlush" fill="#f7a1b4" opacity=".75" stroke="none"><ellipse cx="-7" cy="5" rx="2.8" ry="1.7"/><ellipse cx="14.5" cy="4.5" rx="2.4" ry="1.6"/></g>
         <g id="catEyes" stroke="none">
           <circle cx="-3.5" cy="-1" r="4.4" fill="#2b2230"/><circle cx="10.5" cy="-1.5" r="4" fill="#2b2230"/>
           <circle cx="-2" cy="-2.7" r="1.6" fill="#fff"/><circle cx="11.9" cy="-3.1" r="1.45" fill="#fff"/>
@@ -238,6 +241,8 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   </g>
   <g id="trail"></g>
   <g id="butterflies"></g>
+  <text id="meow" font-family="'Dancing Script', 'Brush Script MT', cursive" font-size="20" font-weight="700" fill="#8e0f30" text-anchor="middle"
+        stroke="rgba(255,250,248,.85)" stroke-width="4" paint-order="stroke" opacity="0">meo~</text>
 </svg>
 </div>
 
@@ -464,7 +469,14 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     if (start !== null) return;
     start = performance.now();
   }
+  // tapping the cat once it has settled: "meo~", a little head shake and a fast tail wag
+  let purrAt = -Infinity;
+  $('cat').addEventListener('click', e => {
+    if (!opened || (performance.now() - openAt) / 1000 < I.lie[1]) return;
+    e.stopPropagation(); purrAt = performance.now();
+  });
   function reset() {
+    purrAt = -Infinity;
     start = null;
     replay.hidden = true;
     hint.classList.remove('gone');
@@ -476,6 +488,13 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   replay.addEventListener('click', e => { e.stopPropagation(); reset(); });
 
   const seed = $('seed'), seedL = $('seedL'), seedR = $('seedR'), head = $('head'), glow = $('glow'), center = $('center');
+  const svgEl = document.querySelector('#stage svg');
+  // a point inside a nested, transformed element, in the stage's viewBox coordinates
+  const ptIn = (el, x, y) => new DOMPoint(x, y).matrixTransform(svgEl.getScreenCTM().inverse().multiply(el.getScreenCTM()));
+  ['#f4a6a6', '#f7c59f', '#f9e79f', '#b8e0b0', '#a7d3e8', '#b3b7e6', '#d4b3e6'].forEach((c, i) => {
+    const r = 190 - i * 6;
+    $('rainbow').appendChild(mk('path', { d: `M${200 - r},470 A${r},${r} 0 0 1 ${200 + r},470`, stroke: c }));
+  });
 
   function frame(now) {
     const t = start === null ? 0 : (now - start) / 1000;
@@ -493,7 +512,12 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     const happy = t > 7.4;
     const tilt = reduce ? 0 : Math.sin(idle * 1.1) * 6 * prog(T.after, T.after + 1, t);
     const up = lie * 6 - sit * 2 + (moving ? -Math.abs(step) * 1.5 : 0);
-    const headA = lerp(0, 32, easeInOut(prog(...I.dip, ot))) * (1 - easeInOut(prog(I.back[0], I.back[0] + .4, ot))) - 12 * lie - 22 * look + tilt;
+    // the pink butterfly lands on its nose after the writing; the cat ducks a little and blushes
+    const land = easeInOut(prog(14.4, 15.2, t)) * (1 - easeInOut(prog(17.2, 18.0, t)));
+    const pk = (now - purrAt) / 1000, purr = pk >= 0 && pk < 1 && !reduce ? Math.sin(pk * Math.PI * 4) * 10 * (1 - pk) : 0;
+    const headA = lerp(0, 32, easeInOut(prog(...I.dip, ot))) * (1 - easeInOut(prog(I.back[0], I.back[0] + .4, ot))) - 12 * lie - 22 * look + tilt + 6 * land + purr;
+    $('catBlush').setAttribute('opacity', .75 + .25 * land);
+    $('catBlush').setAttribute('fill', land > .5 ? '#f27f9c' : '#f7a1b4');
     $('cat').setAttribute('transform', `translate(${cx},${cy}) scale(${CAT})`);
     $('catUp').setAttribute('transform', `translate(0,${up}) rotate(${(moving ? step * 4 : 0) - 16 * sit},${sit ? -20 : 0},${sit ? -8 : -10})`);
     catLegs.forEach((leg, i) => {
@@ -504,7 +528,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
       leg.setAttribute('transform', `translate(${LEG_X[i]},${y}) rotate(${i === 0 || i === 3 ? swing : -swing}) scale(1,${k})`);
     });
     $('catHead').setAttribute('transform', `translate(20,-38) rotate(${headA}) scale(1.12)`);
-    const wag = reduce ? 0 : happy ? Math.sin(idle * 7) * 14 : Math.sin(idle * 2.4) * 8;
+    const wag = reduce ? 0 : pk >= 0 && pk < 1 ? Math.sin(idle * 12) * 16 : happy ? Math.sin(idle * 7) * 14 : Math.sin(idle * 2.4) * 8;
     $('catTail').setAttribute('transform', `rotate(${wag},-19,-18)`);
     $('catEyes').setAttribute('transform', `translate(0,-1) scale(1,${idle % 3.7 < .14 ? .12 : 1}) translate(0,1)`);
     $('catEyes').setAttribute('opacity', happy ? 0 : 1);
@@ -518,6 +542,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     $('rainCloud').setAttribute('transform', `translate(${lerp(110, 200, cIn) + cOut * 90},300)`);
     $('rainCloud').setAttribute('opacity', cIn * (1 - cOut));
     $('dim').setAttribute('opacity', .16 * cIn * (1 - cOut));
+    $('rainbow').setAttribute('opacity', .55 * easeInOut(prog(I.cloud[2], I.cloud[2] + .8, ot)) * (1 - easeInOut(prog(3, 4, t))));
     drops.forEach(d => {
       const y = 18 + ((ot * 1.7 + d.ph) % 1) * 137;
       d.l.setAttribute('x1', d.x); d.l.setAttribute('y1', y); d.l.setAttribute('x2', d.x - 2); d.l.setAttribute('y2', y + 10);
@@ -604,17 +629,29 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
       if (after <= 0) { b.wrap.setAttribute('opacity', 0); return; }
       const a = (t - T.after) * b.sp + b.ph;
       const w = writer(i, t, box);
-      const x = lerp(200 + Math.cos(a) * b.rx, w.x, w.k), y = lerp(215 + Math.sin(a * 1.7) * b.ry, w.y, w.k);
-      const flap = reduce ? .8 : .25 + .75 * Math.abs(Math.sin(idle * (11 + w.k * 6) + b.ph));
+      let x = lerp(200 + Math.cos(a) * b.rx, w.x, w.k), y = lerp(215 + Math.sin(a * 1.7) * b.ry, w.y, w.k);
+      let flap = reduce ? .8 : .25 + .75 * Math.abs(Math.sin(idle * (11 + w.k * 6) + b.ph));
+      let rot = lerp(Math.sin(a) * 18, -8, w.k), sc = lerp(.95, 1.15, w.k);
+      if (i === 0 && land > 0) {
+        const nose = ptIn($('catNose'), 7, 1);
+        x = lerp(x, nose.x, land); y = lerp(y, nose.y - 8, land);
+        flap = lerp(flap, .3 + .15 * Math.sin(idle * 3), land); rot = lerp(rot, 0, land); sc = lerp(sc, .8, land);
+      }
       b.L.setAttribute('transform', `scale(${flap},1)`);
       b.R.setAttribute('transform', `scale(${-flap},1)`);
       b.wrap.setAttribute('opacity', after * .95);
-      b.wrap.setAttribute('transform', `translate(${x},${y}) rotate(${lerp(Math.sin(a) * 18, -8, w.k)}) scale(${lerp(.95, 1.15, w.k)})`);
+      b.wrap.setAttribute('transform', `translate(${x},${y}) rotate(${rot}) scale(${sc})`);
       if (w.active && w.k > .8 && Math.random() < .8) {
         const s = trail[trailNext]; trailNext = (trailNext + 1) % trail.length;
         s.life = 1; s.x = x + (Math.random() - .5) * 8; s.y = y + 6; s.dx = (Math.random() - .5) * 10;
       }
     });
+    const meow = $('meow');
+    if (pk >= 0 && pk < 1.4) {
+      const n = ptIn($('catNose'), 0, -28);
+      meow.setAttribute('x', n.x + 8); meow.setAttribute('y', n.y - 14 - pk * 10);
+      meow.setAttribute('opacity', easeOut(prog(0, .15, pk)) * (1 - prog(.9, 1.4, pk)));
+    } else meow.setAttribute('opacity', 0);
     trail.forEach(s => {
       if (s.life <= 0) return;
       s.life = Math.max(0, s.life - dt / 1.2); s.y += 10 * dt; s.x += s.dx * dt;
