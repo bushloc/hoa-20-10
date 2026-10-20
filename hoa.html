@@ -162,6 +162,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
 
   <g id="meadow"></g>
 
+  <g id="dirt" fill="#9a6b52"></g>
   <!-- chubby grey kitten, facing right; origin on the ground under its body, legs pivot at the hip -->
   <g id="cat" stroke="#5f6270" stroke-width="1.2" stroke-linejoin="round">
     <g fill="#959aa6"><g class="leg"><rect x="-4.5" y="0" width="9" height="11" rx="4.5"/></g><g class="leg"><rect x="-4.5" y="0" width="9" height="11" rx="4.5"/></g></g>
@@ -219,12 +220,16 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     </g>
   </g>
 
+  <!-- the hole the cat digs; the seed drops in, then a little mound covers its lower half -->
+  <ellipse id="hole" cx="200" cy="461" rx="14" ry="4.5" fill="#6f5043" opacity="0"/>
+
   <!-- seed -->
   <g id="seed" transform="translate(200,462)">
     <path id="seedL" d="M0,-14 A11,14 0 0 0 0,14 Z" fill="url(#gSeed)"/>
     <path id="seedR" d="M0,-14 A11,14 0 0 1 0,14 Z" fill="url(#gSeed)"/>
     <path d="M-4,-8 C-6,-3 -6,3 -4,7" fill="none" stroke="#f0d2b8" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>
   </g>
+  <path id="mound" d="M168,466 Q184,446 200,446 Q216,446 232,466 Q216,486 200,486 Q184,486 168,466Z" fill="#c4a08a" stroke="#b98f78" stroke-width="1.2" opacity="0"/>
 
   <!-- rain cloud -->
   <g id="rainCloud" opacity="0">
@@ -272,8 +277,13 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
 
   // seconds after the tap
   // intro, seconds after the tap: kitten walks in, drops the seed, steps back and lies down; a cloud rains on the seed
-  const I = { walk: [.9, 4.4], dip: [4.4, 4.8], drop: [4.7, 5.1], back: [5.2, 6.1], lie: [6.0, 6.5],
-              cloud: [5.4, 6.1, 8.1, 8.7], rain: [5.9, 6.3, 7.8, 8.2], swell: [6.1, 8.2], end: 8.6 };
+  // dig: scratches a hole with its front paws; cover: two sweeps push the dirt back over the seed
+  const I = { walk: [.9, 4.4], dig: [4.5, 6.1], dip: [6.1, 6.5], drop: [6.4, 6.8], cover: [6.8, 7.4], back: [7.5, 8.4], lie: [8.3, 8.8],
+              cloud: [7.7, 8.4, 10.4, 11.0], rain: [8.2, 8.6, 10.1, 10.5], swell: [8.4, 10.5], end: 10.9 };
+  const dirt = Array.from({ length: 14 }, () => {
+    const c = document.createElementNS(NS, 'circle'); c.setAttribute('r', 1.8 + Math.random() * 1.8); $('dirt').appendChild(c);
+    return { c, ph: Math.random(), dx: 50 + Math.random() * 40, h: 25 + Math.random() * 25 };
+  });
   const CAT = 1.5, catLegs = [...document.querySelectorAll('#cat .leg')];
   // far back, far front, near back, near front
   const LEG_X = [-12, 12, -8, 16];
@@ -517,7 +527,12 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
 
     // kitten: waddles in, dips its head to set the seed down, steps back and curls up looking at the flower
     const walk = easeInOut(prog(...I.walk, ot)), back = easeInOut(prog(...I.back, ot)), lie = easeInOut(prog(...I.lie, ot));
-    const cx = lerp(lerp(-150, 158, walk), 100, back), cy = groundY(cx) - 2;
+    const cx = lerp(lerp(-150, 170, walk), 100, back), cy = groundY(cx) - 2;
+    const digging = ot > I.dig[0] && ot < I.dig[1], covering = ot > I.cover[0] && ot < I.cover[1];
+    const lean = Math.max(easeInOut(prog(I.dig[0], I.dig[0] + .25, ot)) * (1 - easeInOut(prog(I.dip[1], I.dip[1] + .25, ot))),
+                          easeInOut(prog(I.cover[0], I.cover[0] + .15, ot)) * (1 - easeInOut(prog(I.cover[1] - .15, I.cover[1], ot))));
+    // front paws: fast alternating scratches while digging, slower sweeps while covering
+    const scratch = digging ? -15 + Math.sin(ot * 28) * 30 : covering ? Math.sin(ot * 14) * 30 : 0;
     const moving = (walk > 0 && walk < 1) || (back > 0 && back < 1);
     const step = Math.sin(cx * .2), swing = moving ? step * 26 : 0;
     // once the plant grows it sits up (front rises about the rump) and follows the stem up to the flower
@@ -534,13 +549,15 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     $('catBlush').setAttribute('opacity', .75 + .25 * land);
     $('catBlush').setAttribute('fill', land > .5 ? '#f27f9c' : '#f7a1b4');
     $('cat').setAttribute('transform', `translate(${cx},${cy}) scale(${CAT})`);
-    $('catUp').setAttribute('transform', `translate(0,${up}) rotate(${(moving ? step * 4 : 0) - 16 * sit},${sit ? -20 : 0},${sit ? -8 : -10})`);
+    $('catUp').setAttribute('transform', `translate(0,${up}) rotate(${(moving ? step * 4 : 0) - 16 * sit + 8 * lean},${sit || lean ? -20 : 0},${sit || lean ? -8 : -10})`);
     catLegs.forEach((leg, i) => {
       const front = i === 1 || i === 3;
       // sitting: front legs stretch down from the raised chest; back legs drop from the rump to stand on the ground
-      const k = lerp(lerp(1, .25, lie), front ? 1.45 : .64, sit);
-      const y = lerp(-11 + lie * 6, front ? -16 : -7, sit);
-      leg.setAttribute('transform', `translate(${LEG_X[i]},${y}) rotate(${i === 0 || i === 3 ? swing : -swing}) scale(1,${k})`);
+      // leaning in to dig, the chest drops, so the front legs shorten and paddle
+      const k = lerp(lerp(1, .25, lie), front ? 1.45 : .64, sit) * (front ? lerp(1, .64, lean) : 1);
+      const y = lerp(-11 + lie * 6, front ? -16 : -7, sit) + (front ? 4 * lean : 0);
+      const rot = front && lean > 0 ? lerp(swing, i === 1 ? scratch : -scratch, lean) : i === 0 || i === 3 ? swing : -swing;
+      leg.setAttribute('transform', `translate(${LEG_X[i]},${y}) rotate(${rot}) scale(1,${k})`);
     });
     $('catHead').setAttribute('transform', `translate(20,-38) rotate(${headA}) scale(1.12)`);
     const wag = reduce ? 0 : pk >= 0 && pk < 1 ? Math.sin(idle * 12) * 16 : happy ? Math.sin(idle * 7) * 14 : Math.sin(idle * 2.4) * 8;
@@ -548,8 +565,20 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     $('catEyes').setAttribute('transform', `translate(0,-1) scale(1,${idle % 3.7 < .14 ? .12 : 1}) translate(0,1)`);
     $('catEyes').setAttribute('opacity', happy ? 0 : 1);
     $('catHappy').setAttribute('opacity', happy ? 1 : 0);
-    const ar = headA * Math.PI / 180;
-    const mouth = { x: cx + CAT * (20 + 1.12 * (Math.cos(ar) * 8 - Math.sin(ar) * 9)), y: cy + CAT * (up - 38 + 1.12 * (Math.sin(ar) * 8 + Math.cos(ar) * 9)) };
+    const mouth = ptIn($('catHead'), 8, 9);
+
+    // the hole opens as it digs and is covered by a mound once the seed is in
+    const holeK = easeOut(prog(I.dig[0] + .2, I.dig[1], ot)), mound = easeOut(prog(...I.cover, ot));
+    $('hole').setAttribute('opacity', holeK * (1 - mound) * .9);
+    $('hole').setAttribute('rx', 14 * holeK);
+    $('mound').setAttribute('opacity', mound);
+    dirt.forEach(d => {
+      if (!(digging || covering) || reduce) { d.c.setAttribute('opacity', 0); return; }
+      // digging flings clods back under the cat; covering pushes them forward onto the mound
+      const u = (ot * 2.2 + d.ph) % 1, dir = digging ? -1 : .35;
+      d.c.setAttribute('cx', 196 + dir * u * d.dx); d.c.setAttribute('cy', 458 - Math.sin(u * Math.PI) * d.h * (digging ? 1 : .4));
+      d.c.setAttribute('opacity', (1 - u) * .9);
+    });
 
     // rain cloud drifts in, rains on the seed, drifts off
     const cIn = easeOut(prog(I.cloud[0], I.cloud[1], ot)), cOut = easeInOut(prog(I.cloud[2], I.cloud[3], ot));
