@@ -46,7 +46,7 @@ body {
 .sub { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); transition: opacity .6s; }
 #hint {
   font-family: var(--display); font-weight: 700; font-size: clamp(30px, 8vw, 44px); line-height: 1.25;
-  color: var(--rose-deep); text-align: center; text-wrap: balance;
+  color: #fff0c9; text-shadow: 0 0 18px #ebc98155; text-align: center; text-wrap: balance;
   animation: twinkle 2.4s ease-in-out infinite;
   transition: opacity .8s ease, transform .9s ease, filter .8s ease;
 }
@@ -89,7 +89,9 @@ button:focus-visible { outline: 3px solid var(--leaf); outline-offset: 2px; }
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 #storyIntro { position: absolute; inset: 0; display: grid; place-items: center; overflow: hidden;
   color: #fff3d6; font: 600 clamp(32px, 7.5vw, 50px)/1.4 var(--display); text-align: center; opacity: 0; }
-#storyBackdrop { position: absolute; inset: 0; background: radial-gradient(ellipse at 48% 48%, #293f65 0%, #182b4a 48%, #101c35 100%); }
+#welcomeSky { position: absolute; inset: 0; background: radial-gradient(ellipse at 48% 48%, #293f65 0%, #182b4a 48%, #101c35 100%); }
+#welcomeStars { width: 100%; height: 100%; transition: opacity .8s ease; }
+#welcomeStars .sky-star { animation: twinkle var(--duration) ease-in-out var(--delay) infinite; }
 #storyIntro p { grid-area: 1 / 1; position: relative; margin: 0; padding: 20px; max-width: 92vw; opacity: 0; }
 #storyIntro .storyText { position: relative; display: inline-block; white-space: nowrap;
   text-shadow: 0 0 5px #ffe2a066, 0 0 24px #e4ba6c44; }
@@ -109,7 +111,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
 @keyframes burst { to { transform: translate(var(--x), var(--y)) scale(.2); opacity: 0; } }
 @keyframes twinkle { 0%, 100% { opacity: .6; } 50% { opacity: 1; } }
 
-@media (prefers-reduced-motion: reduce) { #hint, #replay { animation: none; } .bp { display: none; } }
+@media (prefers-reduced-motion: reduce) { #hint, #replay, #welcomeStars .sky-star { animation: none; } .bp { display: none; } }
 </style>
 </head>
 <body>
@@ -356,9 +358,9 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
 
 <div id="vignette"></div>
 <div id="intro">
+  <div id="welcomeSky" aria-hidden="true"><svg id="welcomeStars" viewBox="0 0 400 640" preserveAspectRatio="xMidYMid slice"></svg></div>
   <div id="hint">Bấm vào đây,<br>điều kì diệu sẽ diễn ra ✨</div>
   <div id="storyIntro" lang="en" role="status" hidden>
-    <div id="storyBackdrop" aria-hidden="true"></div>
     <svg id="storyMagic" aria-hidden="true">
       <g id="storyStars" fill="#fff4d2"></g>
       <g id="storyDust"></g>
@@ -369,6 +371,10 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
         <linearGradient id="gJNGold" x1="0" y1="0" x2=".35" y2="1">
           <stop offset="0" stop-color="#fff9e6"/><stop offset=".6" stop-color="#f6e3b5"/><stop offset="1" stop-color="#dcb878"/>
         </linearGradient>
+        <linearGradient id="gJNShine"><stop offset="0" stop-color="#fffdf1" stop-opacity="0"/><stop offset=".5" stop-color="#fffdf1"/><stop offset="1" stop-color="#fffdf1" stop-opacity="0"/></linearGradient>
+        <mask id="jnShineMask" maskUnits="userSpaceOnUse" x="0" y="0" width="280" height="160">
+          <g fill="none" stroke="#fff"><use href="#jnLetterJ"/><use href="#jnLetterN"/><use href="#jnArc"/><use href="#jnUnderline"/></g>
+        </mask>
       </defs>
       <g fill="none" stroke="url(#gJNGold)">
         <path id="jnArc" d="M38,80 C43,7 186,-14 242,63" stroke-width="1.5" opacity=".65"/>
@@ -376,7 +382,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
         <path id="jnLetterN" d="M137,123 C143,103 142,78 149,57 C153,53 155,68 160,78 C170,98 179,111 188,120 C191,96 195,70 205,56 C212,46 221,53 214,61" stroke-width="5.5"/>
         <path id="jnUnderline" d="M76,141 C115,130 162,137 204,125" stroke-width="1.6" opacity=".7"/>
       </g>
-      <path id="jnSweep" d="M42,88 H236" fill="none" stroke="#fff5cf" stroke-width="1.2" stroke-dasharray="194" stroke-dashoffset="194" opacity="0"/>
+      <g mask="url(#jnShineMask)"><rect id="jnSweep" x="-70" y="0" width="65" height="160" fill="url(#gJNShine)" opacity="0"/></g>
       <path id="jnLogoStar" d="M242,56 L243.5,61.5 L249,63 L243.5,64.5 L242,70 L240.5,64.5 L235,63 L240.5,61.5Z" opacity="0"/>
     </svg>
     <p><span class="storyText">Once Upon a Time....</span></p>
@@ -608,16 +614,16 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   let start = null;
   const hint = $('hint'), replay = $('replay'), vignette = $('vignette');
 
-  const STORY_LEAD = 16.4;
-  const LOGO_SWEEP = [3.2, 4];
+  const STORY_LEAD = 16;
+  const LOGO_SWEEP = [2.8, 3.6];
   const STORY_CUES = [
-    { appear: 4.8, disappear: 7.5 }, { appear: 8.5, disappear: 11.2 }, { appear: 12.2, disappear: 15.3 },
+    { appear: 4.4, disappear: 7.1 }, { appear: 8.1, disappear: 10.8 }, { appear: 11.8, disappear: 14.9 },
   ];
   const storyIntro = $('storyIntro');
   const storyLines = [...storyIntro.querySelectorAll('p')].map(line => ({ line, text: line.querySelector('.storyText') }));
   const logoStrokes = [
-    { path: $('jnArc'), from: 1.28, to: LOGO_SWEEP[0] }, { path: $('jnLetterJ'), from: .2, to: 1.92 },
-    { path: $('jnLetterN'), from: .96, to: 2.88 }, { path: $('jnUnderline'), from: 2.48, to: LOGO_SWEEP[0] },
+    { path: $('jnArc'), from: 1.12, to: LOGO_SWEEP[0] }, { path: $('jnLetterJ'), from: .175, to: 1.68 },
+    { path: $('jnLetterN'), from: .84, to: 2.52 }, { path: $('jnUnderline'), from: 2.17, to: LOGO_SWEEP[0] },
   ].map(stroke => {
     const length = stroke.path.getTotalLength();
     stroke.path.setAttribute('stroke-dasharray', length);
@@ -627,17 +633,29 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     const star = mk('circle', { cx: (8 + i * 37 % 85) + '%', cy: (9 + i * 19 % 80) + '%', r: i % 9 === 0 ? 1.5 : i % 3 === 0 ? .9 : .55 });
     $('storyStars').appendChild(star); return star;
   });
+  // The first screen shares the same night sky and warm stars as the story.
+  for (let i = 0; i < 38; i++) {
+    const x = 16 + i * 137 % 370, y = 20 + i * 193 % 590;
+    const star = mk(i % 5 === 0 ? 'path' : 'circle', i % 5 === 0
+      ? { d: 'M0,-3 L.7,-.7 L3,0 L.7,.7 L0,3 L-.7,.7 L-3,0 L-.7,-.7Z', transform: `translate(${x},${y})`, fill: '#f4d78e' }
+      : { cx: x, cy: y, r: i % 3 === 0 ? 1.1 : .6, fill: '#f4d78e' });
+    star.setAttribute('class', 'sky-star');
+    star.style.setProperty('--duration', (3 + i % 4) + 's');
+    star.style.setProperty('--delay', -(i % 7) + 's');
+    $('welcomeStars').appendChild(star);
+  }
   const storyDust = Array.from({ length: 42 }, (_, i) => {
     const dust = mk('circle', { r: .7 + i % 4 * .3, fill: i % 3 ? '#f1cd85' : '#fff9e5', opacity: 0 });
     $('storyDust').appendChild(dust); return dust;
   });
   let opened = false, openAt = 0, openTimer;
-  // One light connects the logo, three trailer titles, and the planting sequence.
+  // The logo gets its own gleam; a separate fairy light accompanies the three story lines.
   function open() {
     if (opened) return;
     opened = true; openAt = performance.now() + STORY_LEAD * 1000;
     hint.classList.add('gone');
     storyIntro.hidden = false;
+    $('welcomeStars').style.opacity = 0;
     for (let i = 0; i < 18; i++) {
       const sp = document.createElement('i'), a = Math.random() * Math.PI * 2, r = 80 + Math.random() * 120;
       sp.className = 'spark' + (i % 2 ? ' pink' : '');
@@ -655,57 +673,62 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     if (storyIntro.hidden) return;
     const dawn = easeInOut(prog(STORY_LEAD - .7, STORY_LEAD + 1.4, time));
     storyIntro.style.opacity = easeOut(prog(0, .65, time));
-    $('storyBackdrop').style.opacity = 1 - dawn;
+    $('welcomeSky').style.opacity = 1 - dawn;
     $('jnLogo').style.opacity = easeOut(prog(.1, .65, time)) * (1 - easeInOut(prog(STORY_CUES[2].disappear, STORY_LEAD + .1, time)));
     logoStrokes.forEach(({ path, from, to, length }) => path.setAttribute('stroke-dashoffset', reduce ? 0 : length * (1 - easeInOut(prog(from, to, time)))));
-    $('jnLogoStar').setAttribute('opacity', easeOut(prog(2.84, LOGO_SWEEP[0], time)) * .95);
+    $('jnLogoStar').setAttribute('opacity', easeOut(prog(2.485, LOGO_SWEEP[0], time)) * .95);
     const sweep = easeInOut(prog(...LOGO_SWEEP, time));
-    $('jnSweep').setAttribute('stroke-dashoffset', 194 * (1 - sweep));
+    $('jnSweep').setAttribute('x', lerp(-70, 280, sweep));
     $('jnSweep').setAttribute('opacity', reduce ? 0 : prog(LOGO_SWEEP[0], LOGO_SWEEP[0] + .1, time) * (1 - easeInOut(prog(LOGO_SWEEP[1], LOGO_SWEEP[1] + .5, time))));
-    const boxes = storyLines.map(({ text }) => text.getBoundingClientRect());
+    // Stable text anchors keep the light independent of the gentle upward text motion.
+    const boxes = storyLines.map(({ text }) => ({
+      left: (innerWidth - text.offsetWidth) / 2, right: (innerWidth + text.offsetWidth) / 2,
+      width: text.offsetWidth, bottom: (innerHeight + text.offsetHeight) / 2,
+    }));
     storyLines.forEach(({ line }, i) => {
       const { appear, disappear } = STORY_CUES[i];
-      const enter = easeInOut(prog(appear, appear + 1.4, time));
+      const enter = easeOut(prog(appear, appear + 1.3, time));
       const exit = easeInOut(prog(disappear, disappear + .8, time));
-      const zoom = easeInOut(prog(appear, disappear, time));
       line.style.opacity = enter * (1 - exit);
-      line.style.transform = `scale(${reduce ? 1 : lerp(.65, 1.1, zoom)})`;
-      line.style.filter = reduce ? 'none' : `blur(${6 * (1 - enter) + 2 * exit}px)`;
+      line.style.transform = `translate3d(0,${reduce ? 0 : 10 * (1 - enter) - 3 * exit}px,0)`;
+      line.style.filter = 'none';
     });
     storyStars.forEach((star, i) => star.setAttribute('opacity', (reduce ? .3 : .12 + .3 * (1 + Math.sin(time * .65 + i * 2.3)) / 2) * (1 - dawn)));
     const matrix = svgEl.getScreenCTM();
     const landing = new DOMPoint(50, groundY(50) - 70).matrixTransform(matrix);
     const catCrown = ptIn($('catHead'), -8, -20);
     const crown = new DOMPoint(catCrown.x, catCrown.y).matrixTransform(matrix);
-    const logoBox = $('jnLogo').getBoundingClientRect();
-    const logoPoint = x => ({ x: logoBox.left + x / 280 * logoBox.width, y: logoBox.top + 88 / 160 * logoBox.height });
+    // Alternate directions so the light never has to rush back across the title.
+    const nodes = [];
+    STORY_CUES.forEach(({ appear, disappear }, i) => {
+      const box = boxes[i], forward = i % 2 === 0;
+      nodes.push({ t: appear, x: forward ? box.left - 4 : box.right + 4, y: box.bottom + 12 });
+      nodes.push({ t: disappear, x: forward ? box.right + 4 : box.left - 4, y: box.bottom + 12 });
+      if (STORY_CUES[i + 1]) nodes.push({ t: (disappear + STORY_CUES[i + 1].appear) / 2,
+        x: forward ? Math.min(innerWidth - 10, box.right + 18) : Math.max(10, box.left - 18), y: box.bottom - 18 });
+    });
+    const last = nodes[nodes.length - 1];
+    nodes.push({ t: STORY_LEAD + 1, x: lerp(last.x, landing.x, .55), y: lerp(last.y, landing.y, .4) });
+    nodes.push({ t: STORY_LEAD + 2.9, x: landing.x, y: landing.y });
     const pointAt = at => {
-      if (at <= LOGO_SWEEP[1]) return logoPoint(lerp(42, 236, easeInOut(prog(...LOGO_SWEEP, at))));
-      if (at < STORY_CUES[0].appear) {
-        const p = easeInOut(prog(LOGO_SWEEP[1], STORY_CUES[0].appear, at)), from = logoPoint(236);
-        return { x: lerp(from.x, boxes[0].left, p), y: lerp(from.y, boxes[0].bottom + 12, p) - Math.sin(p * Math.PI) * 26 };
+      let p = nodes[0];
+      if (at >= nodes[nodes.length - 1].t) p = nodes[nodes.length - 1];
+      else for (let i = 0; i < nodes.length - 1; i++) {
+        const a = nodes[i], b = nodes[i + 1];
+        if (at < a.t || at > b.t) continue;
+        const before = nodes[Math.max(0, i - 1)], after = nodes[Math.min(nodes.length - 1, i + 2)];
+        const dt = b.t - a.t, u = (at - a.t) / dt;
+        const h0 = 2 * u ** 3 - 3 * u ** 2 + 1, h1 = u ** 3 - 2 * u ** 2 + u;
+        const h2 = -2 * u ** 3 + 3 * u ** 2, h3 = u ** 3 - u ** 2;
+        // Shared tangents keep both position and speed continuous through every turn.
+        const coord = key => h0 * a[key] + h1 * dt * (i === 0 ? 0 : (b[key] - before[key]) / (b.t - before.t))
+          + h2 * b[key] + h3 * dt * (i + 1 === nodes.length - 1 ? 0 : (after[key] - a[key]) / (after.t - a.t));
+        p = { x: coord('x'), y: coord('y') }; break;
       }
-      for (let i = 0; i < STORY_CUES.length; i++) {
-        const { appear, disappear } = STORY_CUES[i], box = boxes[i], next = STORY_CUES[i + 1];
-        if (at <= disappear) {
-          const p = easeInOut(prog(appear, disappear, at));
-          return { x: box.left + box.width * p, y: box.bottom + 12 - Math.sin(p * Math.PI) * 10 };
-        }
-        if (next && at < next.appear) {
-          const p = easeInOut(prog(disappear, next.appear, at)), target = boxes[i + 1];
-          return { x: lerp(box.right, target.left, p), y: lerp(box.bottom + 12, target.bottom + 12, p) - Math.sin(p * Math.PI) * 55 };
-        }
-      }
-      // The last wish flows into daylight and meets the kitten on the same screen coordinates.
-      const last = boxes[boxes.length - 1];
-      const p = easeInOut(prog(STORY_CUES[2].disappear, STORY_LEAD + 2.9, at)), q = 1 - p;
-      const from = { x: last.right, y: last.bottom + 12 }, bend = Math.min(innerWidth * .15, 75);
-      const x = q ** 3 * from.x + 3 * q * q * p * (from.x + bend) + 3 * q * p * p * (landing.x + bend) + p ** 3 * landing.x;
-      const y = q ** 3 * from.y + 3 * q * q * p * (from.y + 25) + 3 * q * p * p * (landing.y - 65) + p ** 3 * landing.y;
       const follow = easeInOut(prog(STORY_LEAD + 2.4, STORY_LEAD + 3.4, at));
-      return { x: lerp(x, crown.x, follow), y: lerp(y, crown.y, follow) };
+      return { x: lerp(p.x, crown.x, follow), y: lerp(p.y, crown.y, follow) };
     };
-    const magic = reduce ? 0 : easeInOut(prog(LOGO_SWEEP[0], LOGO_SWEEP[0] + .15, time)) * (1 - easeInOut(prog(STORY_LEAD + 3.6, STORY_LEAD + 4.3, time)));
+    const magic = reduce ? 0 : easeInOut(prog(STORY_CUES[0].appear - .2, STORY_CUES[0].appear + .4, time)) * (1 - easeInOut(prog(STORY_LEAD + 3.6, STORY_LEAD + 4.3, time)));
     const tip = pointAt(time);
     $('storyWand').setAttribute('opacity', magic);
     $('storyWand').setAttribute('transform', `translate(${tip.x},${tip.y}) rotate(${time * 18})`);
@@ -713,7 +736,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
       const at = time - i * .018, p = pointAt(at), tail = i / storyDust.length;
       dust.setAttribute('cx', p.x + Math.sin(time * 7 + i * 3) * tail * 4);
       dust.setAttribute('cy', p.y + Math.sin(time * 10 + i) * tail * 6);
-      dust.setAttribute('opacity', at < LOGO_SWEEP[0] ? 0 : magic * (1 - tail) ** 1.4 * .8);
+      dust.setAttribute('opacity', at < STORY_CUES[0].appear - .2 ? 0 : magic * (1 - tail) ** 1.4 * .8);
     });
   }
   function bloom() {
@@ -733,6 +756,8 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     hint.classList.remove('gone');
     opened = false; clearTimeout(openTimer);
     storyIntro.hidden = true;
+    $('welcomeSky').style.opacity = 1;
+    $('welcomeStars').style.opacity = 1;
     document.body.classList.remove('open');
   }
   $('stage').addEventListener('click', open);
