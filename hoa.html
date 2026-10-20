@@ -1,0 +1,413 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Hạt Mầm Nở Hoa</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Be+Vietnam+Pro:wght@400;500;600&display=swap">
+<style>
+/* One illustrated sheet: the plant grows in an SVG stage, a hint at the bottom, and butterflies write the note around the flower at the end. */
+:root {
+  --paper: #f6ebe8;
+  --paper-hi: #fdf7f4;
+  --ink: #4a2c33;
+  --ink-soft: #8a6670;
+  --rose: #c81d47;
+  --rose-deep: #8e0f30;
+  --leaf: #4f9a4a;
+  --display: 'Dancing Script', 'Brush Script MT', cursive;
+  --body: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: light;
+}
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body {
+  margin: 0; overflow: hidden;
+  background: radial-gradient(120% 80% at 50% 35%, var(--paper-hi), var(--paper));
+  color: var(--ink); font-family: var(--body);
+  -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
+}
+#stage { position: fixed; inset: 0; cursor: pointer; touch-action: manipulation; }
+#stage svg { width: 100%; height: 100%; display: block; overflow: visible; }
+
+.top, .bottom {
+  position: fixed; left: 0; right: 0; pointer-events: none; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.top { top: 0; padding-top: calc(env(safe-area-inset-top, 0px) + 22px); }
+.bottom { bottom: 0; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 28px); }
+.eyebrow { font-family: var(--display); font-weight: 700; font-size: 32px; line-height: 1; color: var(--rose-deep); }
+.sub { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); transition: opacity .6s; }
+#hint {
+  font-weight: 600; font-size: 16px; color: var(--ink);
+  padding: 12px 22px; border-radius: 999px; background: rgba(255, 255, 255, .7);
+  box-shadow: 0 4px 18px rgba(142, 15, 48, .12);
+  animation: breathe 2.2s ease-in-out infinite; transition: opacity .5s;
+}
+#hint.gone { opacity: 0; }
+#vignette {
+  position: fixed; inset: 0; pointer-events: none; opacity: 0;
+  background: radial-gradient(ellipse 80% 70% at 50% 38%, rgba(120, 60, 72, 0) 50%, rgba(120, 60, 72, .26));
+}
+#replay {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 14px);
+  right: max(16px, env(safe-area-inset-right, 0px));
+  font: 600 13px var(--body); color: var(--rose-deep);
+  background: rgba(255, 255, 255, .72); border: 1px solid rgba(200, 29, 71, .3);
+  border-radius: 999px; padding: 8px 14px; cursor: pointer;
+  animation: fadein .8s ease both;
+}
+button:focus-visible { outline: 3px solid var(--leaf); outline-offset: 2px; }
+
+@keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { #hint, #replay { animation: none; } }
+</style>
+
+<div id="stage" role="button" tabindex="0" aria-label="Chạm vào hạt mầm để hoa nở">
+<svg viewBox="0 0 400 640" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+  <defs>
+    <linearGradient id="gBack" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#a3133b"/><stop offset="1" stop-color="#f48da5"/></linearGradient>
+    <linearGradient id="gMid" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#94103a"/><stop offset="1" stop-color="#e64a70"/></linearGradient>
+    <linearGradient id="gFront" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#7e0c2c"/><stop offset="1" stop-color="#d42a52"/></linearGradient>
+    <linearGradient id="gLeaf" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3a7d3a"/><stop offset="1" stop-color="#6cb85e"/></linearGradient>
+    <linearGradient id="gStem" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#3f7a35"/><stop offset="1" stop-color="#5fa752"/></linearGradient>
+    <radialGradient id="gGlow"><stop offset="0" stop-color="#ffd9a8" stop-opacity=".9"/><stop offset=".55" stop-color="#ffc2cf" stop-opacity=".45"/><stop offset="1" stop-color="#ffc2cf" stop-opacity="0"/></radialGradient>
+    <radialGradient id="gSeed" cx=".35" cy=".3"><stop offset="0" stop-color="#b07a52"/><stop offset="1" stop-color="#6e4329"/></radialGradient>
+    <path id="petal" d="M0,0 C-28,-10 -38,-55 -18,-78 C-8,-88 8,-88 18,-78 C38,-55 28,-10 0,0Z"/>
+    <path id="leaf" d="M0,0 C14,-15 40,-17 58,-4 C40,9 14,8 0,0Z"/>
+    <path id="arc" d="M52,104 Q200,36 348,104"/>
+    <path id="wing" d="M0,0 C-6,-14 -20,-16 -18,-4 C-17,4 -6,4 0,0Z M0,0 C-4,6 -14,12 -10,16 C-6,18 -1,9 0,0Z"/>
+    <path id="star" d="M0,-6 L1.4,-1.4 L6,0 L1.4,1.4 L0,6 L-1.4,1.4 L-6,0 L-1.4,-1.4Z"/>
+  </defs>
+
+  <circle id="glow" cx="200" cy="200" r="235" fill="url(#gGlow)" opacity="0"/>
+
+  <!-- ground -->
+  <path d="M-500,482 Q200,436 900,482 L900,1400 L-500,1400Z" fill="#d8b9a5"/>
+  <path d="M-500,482 Q200,436 900,482" fill="none" stroke="#b98f78" stroke-width="2"/>
+  <g fill="#c9a690" opacity=".8">
+    <ellipse cx="120" cy="500" rx="6" ry="3"/><ellipse cx="290" cy="510" rx="8" ry="3.5"/>
+    <ellipse cx="250" cy="540" rx="4" ry="2"/><ellipse cx="150" cy="560" rx="7" ry="3"/>
+  </g>
+
+  <g id="meadow"></g>
+
+  <!-- roots -->
+  <g id="roots" fill="none" stroke="#8a5f48" stroke-width="2.2" stroke-linecap="round">
+    <path d="M200,468 C198,490 186,505 176,530"/>
+    <path d="M200,468 C204,492 216,508 228,524"/>
+    <path d="M200,468 C200,495 202,520 198,548"/>
+  </g>
+
+  <!-- stem and leaves -->
+  <path id="stem" d="M200,468 C184,402 222,332 200,262 C192,236 198,214 200,200" fill="none" stroke="url(#gStem)" stroke-width="6" stroke-linecap="round"/>
+  <g id="leaves"></g>
+
+  <!-- flower head -->
+  <g id="head" transform="translate(200,200) scale(0)">
+    <g id="sepals"></g>
+    <g id="petals"></g>
+    <g id="center">
+      <path d="M-22,0 C-24,-26 -10,-38 0,-38 C10,-38 24,-26 22,0 C12,8 -12,8 -22,0Z" fill="url(#gFront)"/>
+      <path d="M-7,-22 C3,-31 15,-19 7,-10 C-1,-4 -12,-13 -4,-20" fill="none" stroke="#6a0a22" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M-14,-6 C-8,-16 8,-16 14,-6" fill="none" stroke="#6a0a22" stroke-width="1.2" stroke-linecap="round" opacity=".7"/>
+    </g>
+  </g>
+
+  <!-- seed -->
+  <g id="seed" transform="translate(200,462)">
+    <path id="seedL" d="M0,-14 A11,14 0 0 0 0,14 Z" fill="url(#gSeed)"/>
+    <path id="seedR" d="M0,-14 A11,14 0 0 1 0,14 Z" fill="url(#gSeed)"/>
+    <path d="M-4,-8 C-6,-3 -6,3 -4,7" fill="none" stroke="#f0d2b8" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>
+  </g>
+
+  <g id="sparkles" fill="#f2c46b"></g>
+  <g id="falling"></g>
+  <!-- the note, written by the butterflies: 20 | flower | 10, the wish arcing over the top -->
+  <g font-family="'Dancing Script', 'Brush Script MT', cursive" text-anchor="middle"
+     stroke="rgba(255,250,248,.8)" stroke-width="5" stroke-linejoin="round" paint-order="stroke">
+    <text id="t20" x="58" y="230" font-size="54" font-weight="700" fill="#b0173e" visibility="hidden">20</text>
+    <text id="t10" x="342" y="230" font-size="54" font-weight="700" fill="#b0173e" visibility="hidden">10</text>
+    <text id="tWish" font-size="27" font-weight="700" fill="#8e0f30" visibility="hidden"><textPath href="#arc" startOffset="50%">Chúc em luôn vui vẻ nhá</textPath></text>
+  </g>
+  <g id="trail"></g>
+  <g id="butterflies"></g>
+</svg>
+</div>
+
+<div id="vignette"></div>
+<div class="bottom">
+  <div id="hint">Chạm vào hạt mầm 🌱</div>
+</div>
+<button id="replay" type="button" hidden>Xem lại</button>
+
+<script>
+(() => {
+  const NS = 'http://www.w3.org/2000/svg';
+  const $ = id => document.getElementById(id);
+  const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+  const prog = (a, b, t) => clamp((t - a) / (b - a));
+  const easeInOut = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  const easeOut = x => 1 - Math.pow(1 - x, 3);
+  const easeBack = x => { const c = 1.6; return x <= 0 ? 0 : 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const use = (href, attrs) => { const u = document.createElementNS(NS, 'use'); u.setAttribute('href', href); for (const k in attrs) u.setAttribute(k, attrs[k]); return u; };
+  const g = () => document.createElementNS(NS, 'g');
+
+  // seconds after the tap
+  const T = { crack: [.5, 1.2], roots: [.8, 2.2], stem: [1.0, 4.0], bud: [3.7, 4.7], bloom: [4.7, 7.6], after: 7.2, done: 14.2 };
+
+  /* stem and leaves */
+  const stem = $('stem'), stemLen = stem.getTotalLength();
+  stem.style.strokeDasharray = stemLen;
+  const roots = [...$('roots').children].map(p => { const L = p.getTotalLength(); p.style.strokeDasharray = L; return { p, L }; });
+  // fraction is measured from the soil upward along the stem
+  const LEAVES = [
+    { f: .2, side: 1, rot: -28, s: .95 }, { f: .33, side: -1, rot: -22, s: 1 },
+    { f: .5, side: 1, rot: -30, s: .85 }, { f: .63, side: -1, rot: -26, s: .8 }, { f: .78, side: 1, rot: -34, s: .6 },
+  ];
+  const leaves = LEAVES.map(d => {
+    const p = stem.getPointAtLength(d.f * stemLen);
+    const wrap = g();
+    wrap.appendChild(use('#leaf', { fill: 'url(#gLeaf)' }));
+    const vein = document.createElementNS(NS, 'path');
+    vein.setAttribute('d', 'M2,0 C18,-6 36,-7 52,-4'); vein.setAttribute('fill', 'none');
+    vein.setAttribute('stroke', '#2f6e33'); vein.setAttribute('stroke-width', '1.2'); vein.setAttribute('opacity', '.6');
+    wrap.appendChild(vein);
+    $('leaves').appendChild(wrap);
+    return { d, wrap, x: p.x, y: p.y };
+  });
+
+  /* rose petals: drawn back to front; closed they stack into a bud, open they fan out */
+  const LAYERS = [
+    { fill: 'url(#gBack)', scale: .95, angles: [-118, 118], delay: 0 },
+    { fill: 'url(#gBack)', scale: 1.22, angles: [-78, -42, 0, 42, 78], delay: 0 },
+    { fill: 'url(#gMid)', scale: 1.0, angles: [-56, -20, 20, 56], delay: .12 },
+    { fill: 'url(#gFront)', scale: .8, angles: [-34, 34], delay: .24 },
+  ];
+  const petals = [];
+  LAYERS.forEach(L => L.angles.forEach(a => {
+    const wrap = g();
+    wrap.appendChild(use('#petal', { fill: L.fill, stroke: 'rgba(110,10,40,.28)', 'stroke-width': '1' }));
+    $('petals').appendChild(wrap);
+    petals.push({ wrap, a, s: L.scale, delay: L.delay });
+  }));
+  const sepals = [-30, 30].map(a => {
+    const wrap = g(); wrap.appendChild(use('#petal', { fill: '#4a8f43' })); $('sepals').appendChild(wrap);
+    return { wrap, a };
+  });
+
+  /* after-bloom sparkle and drifting petals */
+  const sparkles = Array.from({ length: 28 }, () => {
+    const ang = Math.random() * Math.PI * 2, r = 70 + Math.random() * 110;
+    const el = use('#star', { opacity: 0 }); $('sparkles').appendChild(el);
+    return { el, x: 200 + Math.cos(ang) * r, y: 200 + Math.sin(ang) * r * .85, k: 1.5 + Math.random() * 2.5, ph: Math.random() * 6, s: .6 + Math.random() * .9 };
+  });
+  const falling = Array.from({ length: 12 }, (_, i) => {
+    const el = use('#petal', { fill: i % 2 ? 'url(#gBack)' : 'url(#gMid)', opacity: 0 }); $('falling').appendChild(el);
+    return { el, x0: 120 + Math.random() * 160, off: Math.random(), sp: .07 + Math.random() * .06, sw: 15 + Math.random() * 25, rot: Math.random() * 360 };
+  });
+
+  /* meadow: pale grass and wildflowers that spring up beside the rose */
+  const groundY = x => { const u = (x + 500) / 1400; return 482 - 92 * u * (1 - u) + 2; };
+  const MEADOW = [
+    { x: 22, k: 'f', c: '#d6e4f6', s: .9 }, { x: 50, k: 'g', s: 1 }, { x: 80, k: 'f', c: '#ffffff', s: 1.1 },
+    { x: 108, k: 'g', s: .8 }, { x: 134, k: 'f', c: '#fff1c4', s: .8 }, { x: 266, k: 'f', c: '#d6e4f6', s: .85 },
+    { x: 294, k: 'g', s: .9 }, { x: 322, k: 'f', c: '#ffffff', s: 1.05 }, { x: 352, k: 'g', s: 1 }, { x: 380, k: 'f', c: '#fff1c4', s: .9 },
+  ];
+  const mk = (tag, attrs) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+  const meadow = MEADOW.map((m, i) => {
+    const wrap = g();
+    if (m.k === 'g') {
+      wrap.appendChild(mk('path', { d: 'M0,0 C-2,-10 -8,-16 -13,-22 M0,0 C0,-12 2,-20 1,-29 M0,0 C3,-9 8,-14 13,-18', fill: 'none', stroke: '#93c184', 'stroke-width': 2, 'stroke-linecap': 'round' }));
+    } else {
+      wrap.appendChild(mk('path', { d: 'M0,0 C-2,-12 2,-22 0,-30', fill: 'none', stroke: '#93c184', 'stroke-width': 1.8, 'stroke-linecap': 'round' }));
+      wrap.appendChild(mk('path', { d: 'M0,-12 C5,-16 10,-15 12,-12 C8,-10 4,-10 0,-12Z', fill: '#a9cf98' }));
+      for (let k = 0; k < 5; k++) {
+        const a = k / 5 * Math.PI * 2 - Math.PI / 2;
+        wrap.appendChild(mk('circle', { cx: Math.cos(a) * 4.6, cy: -34 + Math.sin(a) * 4.6, r: 3.9, fill: m.c, stroke: 'rgba(120,90,100,.18)', 'stroke-width': .6 }));
+      }
+      wrap.appendChild(mk('circle', { cx: 0, cy: -34, r: 2.6, fill: '#f2c46b' }));
+    }
+    $('meadow').appendChild(wrap);
+    return { ...m, wrap, y: groundY(m.x), delay: (i % 5) * .14 + (i >= 5 ? .07 : 0), ph: Math.random() * 6 };
+  });
+
+  /* butterflies circling the flower */
+  const butterflies = [{ c: '#efb3cb', ph: 0, rx: 150, ry: 70, sp: .45 }, { c: '#cdbcec', ph: 2.6, rx: 135, ry: 95, sp: .38 }].map(b => {
+    const wrap = g(), L = g(), R = g();
+    L.appendChild(use('#wing', { fill: b.c, stroke: 'rgba(110,40,70,.25)', 'stroke-width': .6 }));
+    R.appendChild(use('#wing', { fill: b.c, stroke: 'rgba(110,40,70,.25)', 'stroke-width': .6 }));
+    wrap.append(L, R, mk('path', { d: 'M0,-7 L0,9', stroke: '#6a4450', 'stroke-width': 1.8, 'stroke-linecap': 'round' }));
+    wrap.setAttribute('opacity', 0);
+    $('butterflies').appendChild(wrap);
+    return { ...b, wrap, L, R };
+  });
+  /* writing: each character fades in as its butterfly passes over it, leaving a sparkle trail.
+     Per-character opacity (not an animated clipPath) so phones that don't repaint clips still hide unwritten text. */
+  const N = { t20: $('t20'), t10: $('t10'), tWish: $('tWish') };
+  // pink writes 20, hops over the flower, writes 10; lilac writes the wish
+  const W = { in1: [7.6, 8.1], w20: [8.1, 9.3], hop: [9.3, 9.9], w10: [9.9, 11.1], out1: [11.1, 11.7],
+              in2: [10.6, 11.1], wish: [11.1, 13.6], out2: [13.6, 14.2] };
+  const arcY = x => { const u = clamp((x - 52) / 296); return (1 - u) * (1 - u) * 104 + 2 * u * (1 - u) * 36 + u * u * 104; };
+  const along = (bb, p) => ({ x: bb.x + bb.width * p, y: bb.y + bb.height * (.55 + .3 * Math.sin(p * Math.PI * 7)) });
+  function writer(i, t, box) {
+    if (i === 0) {
+      const p20 = prog(...W.w20, t), p10 = prog(...W.w10, t);
+      let pos;
+      if (t < W.hop[0]) pos = along(box.b20, p20);
+      else if (t < W.w10[0]) {
+        const a = along(box.b20, 1), b = along(box.b10, 0), u = easeInOut(prog(...W.hop, t));
+        pos = { x: lerp(a.x, b.x, u), y: lerp(a.y, b.y, u) - Math.sin(u * Math.PI) * 150 };
+      } else pos = along(box.b10, p10);
+      return { k: easeInOut(prog(...W.in1, t) * (1 - prog(...W.out1, t))), ...pos, active: (p20 > 0 && p20 < 1) || (p10 > 0 && p10 < 1) };
+    }
+    const p = prog(...W.wish, t), x = box.bW.x + box.bW.width * p;
+    return { k: easeInOut(prog(...W.in2, t) * (1 - prog(...W.out2, t))), x, y: arcY(x) - 12 + Math.sin(p * Math.PI * 10) * 6, active: p > 0 && p < 1 };
+  }
+  const trail = Array.from({ length: 80 }, (_, i) => {
+    const c = mk('circle', { r: 2, fill: i % 3 ? '#f590ad' : '#ffd27a', opacity: 0 }); $('trail').appendChild(c);
+    return { c, life: 0, x: 0, y: 0, dx: 0 };
+  });
+  let trailNext = 0, lastNow = null;
+  function splitChars(el) {
+    const host = el.querySelector('textPath') || el;
+    const text = host.textContent.normalize('NFC'); host.textContent = '';
+    return [...text].map(ch => {
+      const sp = mk('tspan', { 'fill-opacity': 0, 'stroke-opacity': 0 }); sp.textContent = ch; host.appendChild(sp); return sp;
+    });
+  }
+  const chars = new Map([N.t20, N.t10, N.tWish].map(el => [el, splitChars(el)]));
+  function revealChars(el, edge, p) {
+    el.setAttribute('visibility', p > 0 ? 'visible' : 'hidden');
+    chars.get(el).forEach((sp, i) => {
+      let o = p >= 1 ? 1 : 0;
+      if (p > 0 && p < 1) {
+        try { const e = el.getExtentOfChar(i); o = clamp((edge - e.x) / Math.max(4, e.width)); } catch (_) { o = 0; }
+      }
+      sp.setAttribute('fill-opacity', o); sp.setAttribute('stroke-opacity', o);
+    });
+  }
+
+  /* state */
+  let start = null;
+  const hint = $('hint'), replay = $('replay'), vignette = $('vignette');
+
+  function bloom() {
+    if (start !== null) return;
+    start = performance.now();
+    hint.classList.add('gone');
+  }
+  function reset() {
+    start = null;
+    replay.hidden = true;
+    hint.classList.remove('gone');
+  }
+  $('stage').addEventListener('click', bloom);
+  $('stage').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); bloom(); } });
+  replay.addEventListener('click', e => { e.stopPropagation(); reset(); });
+
+  const seed = $('seed'), seedL = $('seedL'), seedR = $('seedR'), head = $('head'), glow = $('glow'), center = $('center');
+
+  function frame(now) {
+    const t = start === null ? 0 : (now - start) / 1000;
+    const idle = now / 1000;
+
+    // seed: waits with a little wobble, shakes on tap, then splits open and settles
+    const crack = easeOut(prog(...T.crack, t));
+    const shake = start !== null && t < T.crack[0] ? Math.sin(t * 60) * 6 * (t / T.crack[0]) : 0;
+    const wobble = start === null && !reduce ? Math.sin(idle * 2.2) * 5 : 0;
+    seed.setAttribute('transform', `translate(200,${458 + crack * 8}) rotate(${wobble + shake}) scale(1.7)`);
+    seedL.setAttribute('transform', `translate(${-crack * 7},0) rotate(${-crack * 32},0,14)`);
+    seedR.setAttribute('transform', `translate(${crack * 7},0) rotate(${crack * 32},0,14)`);
+    seed.setAttribute('opacity', 1 - prog(2.4, 3.4, t) * .65);
+
+    roots.forEach(({ p, L }, i) => { p.style.strokeDashoffset = L * (1 - easeOut(prog(T.roots[0] + i * .15, T.roots[1], t))); });
+
+    const sp = easeInOut(prog(...T.stem, t));
+    stem.style.strokeDashoffset = stemLen * (1 - sp);
+    stem.style.opacity = t > T.stem[0] ? 1 : 0;
+
+    leaves.forEach(L => {
+      const lp = easeBack(prog(0, .7, (sp - L.d.f) * (T.stem[1] - T.stem[0])));
+      const sway = reduce ? 0 : Math.sin(idle * 1.4 + L.d.f * 9) * 3 * lp;
+      L.wrap.setAttribute('transform', `translate(${L.x},${L.y}) scale(${L.d.side * lp * L.d.s},${lp * L.d.s}) rotate(${L.d.rot + sway})`);
+    });
+
+    // bud, then bloom
+    const bud = easeBack(prog(...T.bud, t));
+    const bl = prog(...T.bloom, t);
+    const breathe = reduce ? 1 : 1 + Math.sin(idle * 1.6) * .012 * prog(T.after, T.after + 1, t);
+    head.setAttribute('transform', `translate(200,200) scale(${bud * lerp(.9, 1, bl) * breathe})`);
+    petals.forEach(P => {
+      const o = easeInOut(prog(P.delay, P.delay + .76, bl));
+      P.wrap.setAttribute('transform', `rotate(${P.a * o}) scale(${lerp(.32, P.s, o)})`);
+    });
+    sepals.forEach(S => {
+      const o = easeOut(prog(0, .5, bl));
+      S.wrap.setAttribute('transform', `rotate(${lerp(S.a, S.a * 4.2, o)}) scale(${lerp(.4, .5, o)})`);
+    });
+    const c = easeBack(prog(.35, 1, bl));
+    center.setAttribute('transform', `scale(${lerp(.3, 1, c)})`);
+
+    // after bloom
+    const after = prog(T.after, T.after + 1.5, t);
+    glow.setAttribute('opacity', after);
+    sparkles.forEach(s => {
+      const tw = reduce ? .8 : .5 + .5 * Math.sin(idle * s.k + s.ph);
+      s.el.setAttribute('opacity', after * tw);
+      s.el.setAttribute('transform', `translate(${s.x},${s.y}) scale(${s.s * (.6 + .4 * tw)})`);
+    });
+    falling.forEach(f => {
+      if (after <= 0 || reduce) { f.el.setAttribute('opacity', 0); return; }
+      const u = ((t - T.after) * f.sp + f.off) % 1;
+      const y = 210 + u * 330, x = f.x0 + Math.sin(u * 9 + f.off * 6) * f.sw;
+      f.el.setAttribute('opacity', after * (1 - u) * .85);
+      f.el.setAttribute('transform', `translate(${x},${y}) rotate(${f.rot + u * 260}) scale(.16)`);
+    });
+
+    vignette.style.opacity = after;
+    meadow.forEach(m => {
+      const k = easeBack(prog(T.after - .4 + m.delay, T.after + .5 + m.delay, t));
+      const sway = reduce ? 0 : Math.sin(idle * 1.3 + m.ph) * 3;
+      m.wrap.setAttribute('transform', `translate(${m.x},${m.y}) rotate(${sway * k}) scale(${k * m.s})`);
+    });
+    const dt = lastNow === null ? 0 : Math.min(.05, (now - lastNow) / 1000); lastNow = now;
+    const box = { b20: N.t20.getBBox(), b10: N.t10.getBBox(), bW: N.tWish.getBBox() };
+    [[N.t20, box.b20, prog(...W.w20, t)], [N.t10, box.b10, prog(...W.w10, t)], [N.tWish, box.bW, prog(...W.wish, t)]]
+      .forEach(([el, bb, p]) => revealChars(el, bb.x + bb.width * p, p));
+
+    butterflies.forEach((b, i) => {
+      if (after <= 0) { b.wrap.setAttribute('opacity', 0); return; }
+      const a = (t - T.after) * b.sp + b.ph;
+      const w = writer(i, t, box);
+      const x = lerp(200 + Math.cos(a) * b.rx, w.x, w.k), y = lerp(215 + Math.sin(a * 1.7) * b.ry, w.y, w.k);
+      const flap = reduce ? .8 : .25 + .75 * Math.abs(Math.sin(idle * (11 + w.k * 6) + b.ph));
+      b.L.setAttribute('transform', `scale(${flap},1)`);
+      b.R.setAttribute('transform', `scale(${-flap},1)`);
+      b.wrap.setAttribute('opacity', after * .95);
+      b.wrap.setAttribute('transform', `translate(${x},${y}) rotate(${lerp(Math.sin(a) * 18, -8, w.k)}) scale(${lerp(.95, 1.15, w.k)})`);
+      if (w.active && w.k > .8 && Math.random() < .8) {
+        const s = trail[trailNext]; trailNext = (trailNext + 1) % trail.length;
+        s.life = 1; s.x = x + (Math.random() - .5) * 8; s.y = y + 6; s.dx = (Math.random() - .5) * 10;
+      }
+    });
+    trail.forEach(s => {
+      if (s.life <= 0) return;
+      s.life = Math.max(0, s.life - dt / 1.2); s.y += 10 * dt; s.x += s.dx * dt;
+      s.c.setAttribute('cx', s.x); s.c.setAttribute('cy', s.y);
+      s.c.setAttribute('r', 1 + 1.6 * s.life); s.c.setAttribute('opacity', s.life * .9);
+    });
+
+    if (replay.hidden && t > T.done) replay.hidden = false;
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+
+</body></html>
