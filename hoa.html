@@ -97,6 +97,7 @@ button:focus-visible { outline: 3px solid var(--leaf); outline-offset: 2px; }
   width: clamp(160px, 36vw, 220px); height: auto; overflow: visible; opacity: 0;
   filter: drop-shadow(0 0 8px #efce8f44); }
 #jnLogo path { stroke-linecap: round; stroke-linejoin: round; }
+#jnSweep { filter: drop-shadow(0 0 3px #fff0b8); }
 #jnLogoStar { fill: #fff5cd; filter: drop-shadow(0 0 4px #f5d68a); }
 #storyMagic { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 #storyWand { fill: #fff9df; filter: drop-shadow(0 0 4px #fff5c1) drop-shadow(0 0 12px #ebc77d); }
@@ -375,10 +376,12 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
         <path id="jnLetterN" d="M137,123 C143,103 142,78 149,57 C153,53 155,68 160,78 C170,98 179,111 188,120 C191,96 195,70 205,56 C212,46 221,53 214,61" stroke-width="5.5"/>
         <path id="jnUnderline" d="M76,141 C115,130 162,137 204,125" stroke-width="1.6" opacity=".7"/>
       </g>
+      <path id="jnSweep" d="M42,88 H236" fill="none" stroke="#fff5cf" stroke-width="1.2" stroke-dasharray="194" stroke-dashoffset="194" opacity="0"/>
       <path id="jnLogoStar" d="M242,56 L243.5,61.5 L249,63 L243.5,64.5 L242,70 L240.5,64.5 L235,63 L240.5,61.5Z" opacity="0"/>
     </svg>
-    <p><span class="storyText">Once upon a time…</span></p>
-    <p><span class="storyText">There was a little cat…</span></p>
+    <p><span class="storyText">Once Upon a Time....</span></p>
+    <p><span class="storyText">There was a little cat</span></p>
+    <p><span class="storyText">With a little wish</span></p>
   </div>
 </div>
 <button id="replay" type="button" hidden>Xem lại</button>
@@ -605,19 +608,23 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   let start = null;
   const hint = $('hint'), replay = $('replay'), vignette = $('vignette');
 
-  const STORY_LEAD = 13.3;
+  const STORY_LEAD = 16.4;
+  const LOGO_SWEEP = [3.2, 4];
+  const STORY_CUES = [
+    { appear: 4.8, disappear: 7.5 }, { appear: 8.5, disappear: 11.2 }, { appear: 12.2, disappear: 15.3 },
+  ];
   const storyIntro = $('storyIntro');
   const storyLines = [...storyIntro.querySelectorAll('p')].map(line => ({ line, text: line.querySelector('.storyText') }));
   const logoStrokes = [
-    { path: $('jnArc'), from: 1.6, to: 4 }, { path: $('jnLetterJ'), from: .25, to: 2.4 },
-    { path: $('jnLetterN'), from: 1.2, to: 3.6 }, { path: $('jnUnderline'), from: 3.1, to: 4 },
+    { path: $('jnArc'), from: 1.28, to: LOGO_SWEEP[0] }, { path: $('jnLetterJ'), from: .2, to: 1.92 },
+    { path: $('jnLetterN'), from: .96, to: 2.88 }, { path: $('jnUnderline'), from: 2.48, to: LOGO_SWEEP[0] },
   ].map(stroke => {
     const length = stroke.path.getTotalLength();
     stroke.path.setAttribute('stroke-dasharray', length);
     return { ...stroke, length };
   });
-  const storyStars = Array.from({ length: 18 }, (_, i) => {
-    const star = mk('circle', { cx: (8 + i * 37 % 85) + '%', cy: (9 + i * 19 % 80) + '%', r: i % 3 === 0 ? 1.3 : .7 });
+  const storyStars = Array.from({ length: 54 }, (_, i) => {
+    const star = mk('circle', { cx: (8 + i * 37 % 85) + '%', cy: (9 + i * 19 % 80) + '%', r: i % 9 === 0 ? 1.5 : i % 3 === 0 ? .9 : .55 });
     $('storyStars').appendChild(star); return star;
   });
   const storyDust = Array.from({ length: 42 }, (_, i) => {
@@ -625,7 +632,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     $('storyDust').appendChild(dust); return dust;
   });
   let opened = false, openAt = 0, openTimer;
-  // One tap starts the two story lines, then the original planting sequence.
+  // One light connects the logo, three trailer titles, and the planting sequence.
   function open() {
     if (opened) return;
     opened = true; openAt = performance.now() + STORY_LEAD * 1000;
@@ -646,52 +653,59 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   function renderStory(time) {
     storyIntro.hidden = !opened || time > STORY_LEAD + 4.5;
     if (storyIntro.hidden) return;
-    const dawn = easeInOut(prog(12.6, 14.7, time));
+    const dawn = easeInOut(prog(STORY_LEAD - .7, STORY_LEAD + 1.4, time));
     storyIntro.style.opacity = easeOut(prog(0, .65, time));
     $('storyBackdrop').style.opacity = 1 - dawn;
-    $('jnLogo').style.opacity = easeOut(prog(.1, .65, time)) * (1 - easeInOut(prog(12.2, 13.4, time)));
+    $('jnLogo').style.opacity = easeOut(prog(.1, .65, time)) * (1 - easeInOut(prog(STORY_CUES[2].disappear, STORY_LEAD + .1, time)));
     logoStrokes.forEach(({ path, from, to, length }) => path.setAttribute('stroke-dashoffset', reduce ? 0 : length * (1 - easeInOut(prog(from, to, time)))));
-    $('jnLogoStar').setAttribute('opacity', easeOut(prog(3.55, 4, time)) * .95);
+    $('jnLogoStar').setAttribute('opacity', easeOut(prog(2.84, LOGO_SWEEP[0], time)) * .95);
+    const sweep = easeInOut(prog(...LOGO_SWEEP, time));
+    $('jnSweep').setAttribute('stroke-dashoffset', 194 * (1 - sweep));
+    $('jnSweep').setAttribute('opacity', reduce ? 0 : prog(LOGO_SWEEP[0], LOGO_SWEEP[0] + .1, time) * (1 - easeInOut(prog(LOGO_SWEEP[1], LOGO_SWEEP[1] + .5, time))));
     const boxes = storyLines.map(({ text }) => text.getBoundingClientRect());
     storyLines.forEach(({ line }, i) => {
-      // Finish drawing JN at 4 s, pause for a full second, then introduce each sentence.
-      const appear = i === 0 ? 5 : 9.1, disappear = i === 0 ? 8 : 12.2;
+      const { appear, disappear } = STORY_CUES[i];
       const enter = easeInOut(prog(appear, appear + 1.4, time));
       const exit = easeInOut(prog(disappear, disappear + .8, time));
       const zoom = easeInOut(prog(appear, disappear, time));
       line.style.opacity = enter * (1 - exit);
-      line.style.transform = `scale(${reduce ? 1 : lerp(.92, 1, zoom)})`;
+      line.style.transform = `scale(${reduce ? 1 : lerp(.65, 1.1, zoom)})`;
       line.style.filter = reduce ? 'none' : `blur(${6 * (1 - enter) + 2 * exit}px)`;
     });
-    storyStars.forEach((star, i) => star.setAttribute('opacity', (reduce ? .35 : .2 + .35 * (1 + Math.sin(time * .9 + i * 2.3)) / 2) * (1 - dawn)));
+    storyStars.forEach((star, i) => star.setAttribute('opacity', (reduce ? .3 : .12 + .3 * (1 + Math.sin(time * .65 + i * 2.3)) / 2) * (1 - dawn)));
     const matrix = svgEl.getScreenCTM();
     const landing = new DOMPoint(50, groundY(50) - 70).matrixTransform(matrix);
     const catCrown = ptIn($('catHead'), -8, -20);
     const crown = new DOMPoint(catCrown.x, catCrown.y).matrixTransform(matrix);
+    const logoBox = $('jnLogo').getBoundingClientRect();
+    const logoPoint = x => ({ x: logoBox.left + x / 280 * logoBox.width, y: logoBox.top + 88 / 160 * logoBox.height });
     const pointAt = at => {
-      const first = boxes[0], second = boxes[1];
-      if (at <= 8) {
-        const p = easeInOut(prog(5, 8, at));
-        return { x: first.left + first.width * p, y: first.bottom + 12 - Math.sin(p * Math.PI) * 10 };
+      if (at <= LOGO_SWEEP[1]) return logoPoint(lerp(42, 236, easeInOut(prog(...LOGO_SWEEP, at))));
+      if (at < STORY_CUES[0].appear) {
+        const p = easeInOut(prog(LOGO_SWEEP[1], STORY_CUES[0].appear, at)), from = logoPoint(236);
+        return { x: lerp(from.x, boxes[0].left, p), y: lerp(from.y, boxes[0].bottom + 12, p) - Math.sin(p * Math.PI) * 26 };
       }
-      if (at < 9.1) {
-        const p = easeInOut(prog(8, 9.1, at));
-        return { x: lerp(first.right, second.left, p), y: lerp(first.bottom + 12, second.bottom + 12, p) - Math.sin(p * Math.PI) * 55 };
+      for (let i = 0; i < STORY_CUES.length; i++) {
+        const { appear, disappear } = STORY_CUES[i], box = boxes[i], next = STORY_CUES[i + 1];
+        if (at <= disappear) {
+          const p = easeInOut(prog(appear, disappear, at));
+          return { x: box.left + box.width * p, y: box.bottom + 12 - Math.sin(p * Math.PI) * 10 };
+        }
+        if (next && at < next.appear) {
+          const p = easeInOut(prog(disappear, next.appear, at)), target = boxes[i + 1];
+          return { x: lerp(box.right, target.left, p), y: lerp(box.bottom + 12, target.bottom + 12, p) - Math.sin(p * Math.PI) * 55 };
+        }
       }
-      if (at <= 12.2) {
-        const p = easeInOut(prog(9.1, 12.2, at));
-        return { x: second.left + second.width * p, y: second.bottom + 12 - Math.sin(p * Math.PI) * 10 };
-      }
-      // Use the displayed SVG matrix, including its entrance motion and letterboxing.
-      const p = easeInOut(prog(12.2, 16.2, at)), q = 1 - p;
-      const start = { x: second.right, y: second.bottom + 12 };
-      const bend = Math.min(innerWidth * .15, 75);
-      const x = q ** 3 * start.x + 3 * q * q * p * (start.x + bend) + 3 * q * p * p * (landing.x + bend) + p ** 3 * landing.x;
-      const y = q ** 3 * start.y + 3 * q * q * p * (start.y + 25) + 3 * q * p * p * (landing.y - 65) + p ** 3 * landing.y;
-      const follow = easeInOut(prog(15.7, 16.7, at));
+      // The last wish flows into daylight and meets the kitten on the same screen coordinates.
+      const last = boxes[boxes.length - 1];
+      const p = easeInOut(prog(STORY_CUES[2].disappear, STORY_LEAD + 2.9, at)), q = 1 - p;
+      const from = { x: last.right, y: last.bottom + 12 }, bend = Math.min(innerWidth * .15, 75);
+      const x = q ** 3 * from.x + 3 * q * q * p * (from.x + bend) + 3 * q * p * p * (landing.x + bend) + p ** 3 * landing.x;
+      const y = q ** 3 * from.y + 3 * q * q * p * (from.y + 25) + 3 * q * p * p * (landing.y - 65) + p ** 3 * landing.y;
+      const follow = easeInOut(prog(STORY_LEAD + 2.4, STORY_LEAD + 3.4, at));
       return { x: lerp(x, crown.x, follow), y: lerp(y, crown.y, follow) };
     };
-    const magic = reduce ? 0 : easeInOut(prog(5, 5.6, time)) * (1 - easeInOut(prog(16.9, 17.6, time)));
+    const magic = reduce ? 0 : easeInOut(prog(LOGO_SWEEP[0], LOGO_SWEEP[0] + .15, time)) * (1 - easeInOut(prog(STORY_LEAD + 3.6, STORY_LEAD + 4.3, time)));
     const tip = pointAt(time);
     $('storyWand').setAttribute('opacity', magic);
     $('storyWand').setAttribute('transform', `translate(${tip.x},${tip.y}) rotate(${time * 18})`);
@@ -699,7 +713,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
       const at = time - i * .018, p = pointAt(at), tail = i / storyDust.length;
       dust.setAttribute('cx', p.x + Math.sin(time * 7 + i * 3) * tail * 4);
       dust.setAttribute('cy', p.y + Math.sin(time * 10 + i) * tail * 6);
-      dust.setAttribute('opacity', at < 5 ? 0 : magic * (1 - tail) ** 1.4 * .8);
+      dust.setAttribute('opacity', at < LOGO_SWEEP[0] ? 0 : magic * (1 - tail) ** 1.4 * .8);
     });
   }
   function bloom() {
