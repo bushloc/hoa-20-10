@@ -159,20 +159,16 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
 
   <!-- chubby grey kitten, facing right; origin on the ground under its body, legs pivot at the hip -->
   <g id="cat" stroke="#5f6270" stroke-width="1.2" stroke-linejoin="round">
+    <g fill="#959aa6"><g class="leg"><rect x="-4.5" y="0" width="9" height="11" rx="4.5"/></g><g class="leg"><rect x="-4.5" y="0" width="9" height="11" rx="4.5"/></g></g>
     <g id="catUp">
       <g id="catTail" fill="none" stroke-linecap="round">
         <path d="M-19,-18 C-34,-18 -38,-32 -32,-42 C-29,-47 -23,-46 -24,-40" stroke-width="11.5"/>
         <path d="M-19,-18 C-34,-18 -38,-32 -32,-42 C-29,-47 -23,-46 -24,-40" stroke="#a9acb8" stroke-width="9"/>
         <path d="M-31,-43.5 C-28.5,-47 -23,-46 -24,-40" stroke="#fff" stroke-width="9"/>
       </g>
-      <!-- legs live in the body's frame so they tilt with it; their tops tuck into the belly -->
-      <g fill="#959aa6"><g class="leg"><rect x="-5.5" y="0" width="11" height="15" rx="5.5"/><ellipse cx="0" cy="12.5" rx="5" ry="2.8" fill="#e9e9ee" stroke="none"/></g><g class="leg"><rect x="-5.5" y="0" width="11" height="15" rx="5.5"/><ellipse cx="0" cy="12.5" rx="5" ry="2.8" fill="#e9e9ee" stroke="none"/></g></g>
       <ellipse cx="0" cy="-21" rx="24" ry="15" fill="#a9acb8"/>
       <ellipse cx="12" cy="-17" rx="9" ry="9" fill="#fff" stroke="none"/>
       <path d="M-13,-34 q2,4 0,8 M-5,-35.5 q2,4 0,8 M3,-35 q2,4 0,7" fill="none" stroke="#7f8290" stroke-width="1.8" stroke-linecap="round"/>
-      <g fill="#a9acb8"><g class="leg"><rect x="-5.5" y="0" width="11" height="15" rx="5.5"/><ellipse cx="0" cy="12.5" rx="5" ry="2.8" fill="#fff" stroke="none"/><ellipse cx="0" cy="13.2" rx="2.2" ry="1.2" fill="#f7a1b4" stroke="none"/></g><g class="leg"><rect x="-5.5" y="0" width="11" height="15" rx="5.5"/><ellipse cx="0" cy="12.5" rx="5" ry="2.8" fill="#fff" stroke="none"/><ellipse cx="0" cy="13.2" rx="2.2" ry="1.2" fill="#f7a1b4" stroke="none"/></g></g>
-      <!-- round haunch with a white foot, shown when it sits up -->
-      <g id="catHaunch" opacity="0"><ellipse cx="-10" cy="-14" rx="14" ry="12" fill="#a9acb8"/><ellipse cx="0" cy="-3.5" rx="6.5" ry="3" fill="#fff"/></g>
       <g id="catHead">
         <path d="M-16,-5 C-18,-14 -16,-21 -12,-21 C-8,-21 -4,-16 -2,-13Z M2,-14 C5,-19 10,-22 13,-21 C17,-20 17,-12 16,-5Z" fill="#a9acb8"/>
         <path d="M-12.5,-9 C-13.5,-15 -12,-18 -10.5,-17.5 C-8.5,-16 -7,-14 -6,-13Z M6,-14 C8,-17 11,-18.5 12,-18 C13.5,-16 13.5,-12 13,-9Z" fill="#f7b9c6" stroke="none"/>
@@ -191,12 +187,10 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
         <path d="M4,6 Q5.5,8 7,6 Q8.5,8 10,6" fill="none" stroke="#5a4b55" stroke-width=".8" stroke-linecap="round"/>
         <path d="M15,5 L23,3.5 M15,7 L23,8" fill="none" stroke="#7f8290" stroke-width=".6"/>
       </g>
-      <!-- pink collar with a bow and a little bell -->
+      <!-- pink collar -->
       <path d="M8,-23 Q17,-17 28,-22" fill="none" stroke="#f07fa0" stroke-width="3.4" stroke-linecap="round"/>
-      <path d="M11,-20.5 l-4.5,-3.5 l-.5,6.5Z M11,-20.5 l3.5,-4.5 l1.5,6Z" fill="#f590ad" stroke-width=".8"/>
-      <circle cx="19" cy="-16.8" r="2.6" fill="#f2c46b" stroke="#b8862b" stroke-width=".8"/>
-      <path d="M17.8,-16 L20.2,-16" stroke="#b8862b" stroke-width=".7"/>
     </g>
+    <g fill="#a9acb8"><g class="leg"><rect x="-4.5" y="0" width="9" height="11" rx="4.5"/><ellipse cx="0" cy="9" rx="4" ry="2.2" fill="#fff" stroke="none"/><ellipse cx="0" cy="9.6" rx="1.9" ry="1.1" fill="#f7a1b4" stroke="none"/></g><g class="leg"><rect x="-4.5" y="0" width="9" height="11" rx="4.5"/><ellipse cx="0" cy="9" rx="4" ry="2.2" fill="#fff" stroke="none"/><ellipse cx="0" cy="9.6" rx="1.9" ry="1.1" fill="#f7a1b4" stroke="none"/></g></g>
   </g>
 
   <!-- roots -->
@@ -275,9 +269,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
               cloud: [5.4, 6.1, 8.1, 8.7], rain: [5.9, 6.3, 7.8, 8.2], swell: [6.1, 8.2], end: 8.6 };
   const CAT = 1.5, catLegs = [...document.querySelectorAll('#cat .leg')];
   // far back, far front, near back, near front
-  const LEG_X = [-13, 10, -9, 15], LEG_TOP = -14, LEG_LEN = 15;
-  // sitting: the body tips up about the rump by SIT_A degrees
-  const SIT_A = 22, RUMP = [-18, -6];
+  const LEG_X = [-12, 12, -8, 16];
   const drops = Array.from({ length: 40 }, () => {
     const l = document.createElementNS(NS, 'line'); $('rain').appendChild(l);
     return { l, x: -60 + Math.random() * 120, ph: Math.random() };
@@ -505,22 +497,15 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     const up = lie * 6 - sit * 2 + (moving ? -Math.abs(step) * 1.5 : 0);
     const headA = lerp(0, 32, easeInOut(prog(...I.dip, ot))) * (1 - easeInOut(prog(I.back[0], I.back[0] + .4, ot))) - 12 * lie - 22 * look + tilt;
     $('cat').setAttribute('transform', `translate(${cx},${cy}) scale(${CAT})`);
-    const bodyA = (moving ? step * 4 : 0) - SIT_A * sit;
-    $('catUp').setAttribute('transform', `translate(0,${up}) rotate(${bodyA},${RUMP[0]},${RUMP[1]})`);
-    const sa = bodyA * Math.PI / 180;
+    $('catUp').setAttribute('transform', `translate(0,${up}) rotate(${(moving ? step * 4 : 0) - 16 * sit},${sit ? -20 : 0},${sit ? -8 : -10})`);
     catLegs.forEach((leg, i) => {
       const front = i === 1 || i === 3;
-      // front legs counter-rotate to stand straight and stretch to reach the ground from the raised chest
-      const topY = RUMP[1] + (LEG_X[i] - RUMP[0]) * Math.sin(sa) + (LEG_TOP - RUMP[1]) * Math.cos(sa) + up;
-      const k = lerp(lerp(1, .55, lie), front ? -topY / LEG_LEN : 1, sit);
-      leg.setAttribute('transform', `translate(${LEG_X[i]},${LEG_TOP}) rotate(${(i === 0 || i === 3 ? swing : -swing) + (front ? SIT_A * sit : 0)}) scale(1,${k})`);
-      if (!front) leg.setAttribute('opacity', 1 - sit);
+      const k = front ? lerp(lerp(1, .25, lie), 1.45, sit) : lerp(1, .25, lie);
+      leg.setAttribute('transform', `translate(${LEG_X[i]},${-11 + lie * 6 - (front ? sit * 11 : 0)}) rotate(${i === 0 || i === 3 ? swing : -swing}) scale(1,${k})`);
     });
-    $('catHaunch').setAttribute('opacity', sit);
     $('catHead').setAttribute('transform', `translate(20,-38) rotate(${headA}) scale(1.12)`);
     const wag = reduce ? 0 : happy ? Math.sin(idle * 7) * 14 : Math.sin(idle * 2.4) * 8;
-    // sitting, the tail sweeps back and down to rest along the ground
-    $('catTail').setAttribute('transform', `rotate(${wag * (1 - sit * .6) - 55 * sit},-19,-18)`);
+    $('catTail').setAttribute('transform', `rotate(${wag},-19,-18)`);
     $('catEyes').setAttribute('transform', `translate(0,-1) scale(1,${idle % 3.7 < .14 ? .12 : 1}) translate(0,1)`);
     $('catEyes').setAttribute('opacity', happy ? 0 : 1);
     $('catHappy').setAttribute('opacity', happy ? 1 : 0);
