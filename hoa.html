@@ -126,12 +126,27 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     <linearGradient id="gStem" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#3f7a35"/><stop offset="1" stop-color="#5fa752"/></linearGradient>
     <radialGradient id="gGlow"><stop offset="0" stop-color="#ffd9a8" stop-opacity=".9"/><stop offset=".55" stop-color="#ffc2cf" stop-opacity=".45"/><stop offset="1" stop-color="#ffc2cf" stop-opacity="0"/></radialGradient>
     <radialGradient id="gSeed" cx=".35" cy=".3"><stop offset="0" stop-color="#b07a52"/><stop offset="1" stop-color="#6e4329"/></radialGradient>
+    <linearGradient id="gSunbeam" gradientUnits="userSpaceOnUse" x1="338" y1="150" x2="145" y2="440">
+      <stop offset="0" stop-color="#fff7d2" stop-opacity=".8"/>
+      <stop offset=".5" stop-color="#fff1bb" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#fff7d2" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="softSunbeam" filterUnits="userSpaceOnUse" x="0" y="125" width="380" height="380">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
     <path id="petal" d="M0,0 C-28,-10 -38,-55 -18,-78 C-8,-88 8,-88 18,-78 C38,-55 28,-10 0,0Z"/>
     <path id="leaf" d="M0,0 C14,-15 40,-17 58,-4 C40,9 14,8 0,0Z"/>
     <path id="arc" d="M52,104 Q200,36 348,104"/>
     <path id="wing" d="M0,0 C-6,-14 -20,-16 -18,-4 C-17,4 -6,4 0,0Z M0,0 C-4,6 -14,12 -10,16 C-6,18 -1,9 0,0Z"/>
     <path id="star" d="M0,-6 L1.4,-1.4 L6,0 L1.4,1.4 L0,6 L-1.4,1.4 L-6,0 L-1.4,-1.4Z"/>
   </defs>
+
+  <!-- Wide, soft sunlight stays behind the flower and fades before reaching the roots. -->
+  <g id="sunbeams" fill="url(#gSunbeam)" filter="url(#softSunbeam)" opacity="0">
+    <path d="M326,151 L332,163 L55,330 L20,264Z"/>
+    <path d="M334,165 L344,169 L180,483 L94,457Z"/>
+    <path d="M350,166 L355,162 L295,455 L229,445Z"/>
+  </g>
 
   <!-- A small cream sun peeks out again after the rain. -->
   <g id="sun" transform="translate(338,150)">
@@ -719,6 +734,10 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     const sunBloom = reduce ? 0 : Math.sin(prog(...T.bloom, t) * Math.PI);
     const sunBlinkPhase = ot % 6.2;
     const sunBlink = reduce || sunBlinkPhase > .45 ? 0 : Math.sin(sunBlinkPhase / .45 * Math.PI) ** 2;
+    const sunbeamCalm = easeInOut(prog(T.bloom[1], T.done, t));
+    const sunbeamSway = reduce ? 0 : Math.sin((ot - I.cloud[2]) * .3) * .65;
+    $('sunbeams').setAttribute('opacity', clearSky * (lerp(.18, .12, sunbeamCalm) + .08 * sunBloom));
+    $('sunbeams').setAttribute('transform', `rotate(${sunbeamSway},338,150)`);
     $('sunCore').setAttribute('transform', `translate(0,${sunCloud * 9})`);
     $('sunCover').setAttribute('opacity', sunCloud * .98);
     $('sunCover').setAttribute('transform', `translate(${30 * (1 - sunCloud)},0)`);
