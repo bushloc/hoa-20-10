@@ -102,6 +102,7 @@ button:focus-visible { outline: 3px solid var(--leaf); outline-offset: 2px; }
 #jnSweep { filter: drop-shadow(0 0 3px #ffe8a3) drop-shadow(0 0 8px #f6cc76); }
 #jnLogoStar { fill: #fff5cd; filter: drop-shadow(0 0 4px #f5d68a); }
 #storyMagic { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+#flyingRose { filter: drop-shadow(0 0 5px #f8ccba88); }
 #storyWand { fill: #fff9df; filter: drop-shadow(0 0 4px #fff5c1) drop-shadow(0 0 12px #ebc77d); }
 #stage svg, #bg { opacity: 0; transform: translateY(26px); transition: opacity 1.4s ease, transform 1.7s cubic-bezier(.2, .8, .2, 1); }
 body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
@@ -150,6 +151,11 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     <filter id="softSunbeam" filterUnits="userSpaceOnUse" x="0" y="125" width="380" height="380">
       <feGaussianBlur stdDeviation="4"/>
     </filter>
+    <g id="roseBud">
+      <path d="M-22,0 C-24,-26 -10,-38 0,-38 C10,-38 24,-26 22,0 C12,8 -12,8 -22,0Z" fill="url(#gFront)"/>
+      <path d="M-7,-22 C3,-31 15,-19 7,-10 C-1,-4 -12,-13 -4,-20" fill="none" stroke="#6a0a22" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M-14,-6 C-8,-16 8,-16 14,-6" fill="none" stroke="#6a0a22" stroke-width="1.2" stroke-linecap="round" opacity=".7"/>
+    </g>
     <path id="petal" d="M0,0 C-28,-10 -38,-55 -18,-78 C-8,-88 8,-88 18,-78 C38,-55 28,-10 0,0Z"/>
     <path id="leaf" d="M0,0 C14,-15 40,-17 58,-4 C40,9 14,8 0,0Z"/>
     <path id="arc" d="M52,104 Q200,36 348,104"/>
@@ -315,11 +321,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   <g id="head" transform="translate(200,200) scale(0)">
     <g id="sepals"></g>
     <g id="petals"></g>
-    <g id="center">
-      <path d="M-22,0 C-24,-26 -10,-38 0,-38 C10,-38 24,-26 22,0 C12,8 -12,8 -22,0Z" fill="url(#gFront)"/>
-      <path d="M-7,-22 C3,-31 15,-19 7,-10 C-1,-4 -12,-13 -4,-20" fill="none" stroke="#6a0a22" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M-14,-6 C-8,-16 8,-16 14,-6" fill="none" stroke="#6a0a22" stroke-width="1.2" stroke-linecap="round" opacity=".7"/>
-    </g>
+    <g id="center"><use href="#roseBud"/></g>
   </g>
 
   <!-- the hole the cat digs; the seed drops in, then a little mound covers its lower half -->
@@ -364,6 +366,13 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     <svg id="storyMagic" aria-hidden="true">
       <g id="storyStars" fill="#fff4d2"></g>
       <g id="storyDust"></g>
+      <g id="flyingRose" opacity="0">
+        <path d="M0,8 Q-3,17 0,22" fill="none" stroke="url(#gStem)" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M-1,16 C-11,9 -13,16 -2,19Z M0,19 C9,11 13,17 1,21Z" fill="url(#gLeaf)"/>
+        <use href="#petal" fill="url(#gBack)" transform="translate(0,10) rotate(-32) scale(.18)"/>
+        <use href="#petal" fill="url(#gMid)" transform="translate(0,10) rotate(32) scale(.18)"/>
+        <use href="#roseBud" transform="translate(0,8) scale(.45)"/>
+      </g>
       <path id="storyWand" d="M0,-7 L1.5,-1.5 L7,0 L1.5,1.5 L0,7 L-1.5,1.5 L-7,0 L-1.5,-1.5Z"/>
     </svg>
     <svg id="jnLogo" viewBox="0 0 280 160" role="img" aria-label="JN">
@@ -736,7 +745,11 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     };
     const magic = reduce ? 0 : easeInOut(prog(STORY_CUES[0].appear - .2, STORY_CUES[0].appear + .4, time)) * (1 - easeInOut(prog(STORY_LEAD + 3.6, STORY_LEAD + 4.3, time)));
     const tip = pointAt(time);
-    $('storyWand').setAttribute('opacity', magic);
+    // The final wish turns into a miniature of the rose the kitten will grow.
+    const roseFlight = easeInOut(prog(STORY_CUES[2].disappear, STORY_CUES[2].disappear + .7, time));
+    $('storyWand').setAttribute('opacity', magic * (1 - roseFlight));
+    $('flyingRose').setAttribute('opacity', magic * roseFlight);
+    $('flyingRose').setAttribute('transform', `translate(${tip.x},${tip.y}) rotate(${-10 + Math.sin((time - STORY_CUES[2].disappear) * 2.4) * 9}) scale(${lerp(.6, .9, roseFlight)})`);
     $('storyWand').setAttribute('transform', `translate(${tip.x},${tip.y}) rotate(${time * 18})`);
     storyDust.forEach((dust, i) => {
       const at = time - i * .018, p = pointAt(at), tail = i / storyDust.length;
@@ -827,7 +840,8 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     const pu = t > T.after + 1 && !reduce ? ((t - T.after - 1) % 6) / 6 : -1;
     const glance = pu < 0 ? 0 : easeInOut(prog(.4, .5, pu)) * (1 - easeInOut(prog(.75, .85, pu)));
     const puzzled = easeInOut(prog(17.45, 17.7, t)) * (1 - easeInOut(prog(19, 19.5, t)));
-    const headA = lerp(0, 32, easeInOut(prog(...I.dip, ot))) * (1 - easeInOut(prog(I.back[0], I.back[0] + .4, ot))) - 12 * lie - 22 * look + tilt + 6 * land + sniff + 22 * sneeze + purr + 14 * glance * (1 - watch) + nod + 7 * wet + 11 * puzzled - 5 * earLand;
+    const flowerLook = reduce ? 0 : easeInOut(prog(2.3, 2.8, ot)) * (1 - easeInOut(prog(4.2, 4.5, ot)));
+    const headA = lerp(0, 32, easeInOut(prog(...I.dip, ot))) * (1 - easeInOut(prog(I.back[0], I.back[0] + .4, ot))) - 12 * lie - 22 * look + tilt + 6 * land + sniff + 22 * sneeze + purr + 14 * glance * (1 - watch) + nod + 7 * wet + 11 * puzzled - 5 * earLand - 10 * flowerLook;
     $('catEars').setAttribute('transform', `rotate(${earFlick + earTwitch},0,-10)`);
     $('catMud').setAttribute('opacity', .85 * prog(5.1, 5.8, ot) * (1 - prog(9.65, 10.15, ot)));
     $('catWipe').setAttribute('opacity', wipe);
