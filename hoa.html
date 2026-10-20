@@ -92,13 +92,7 @@ button:focus-visible { outline: 3px solid var(--leaf); outline-offset: 2px; }
 #storyBackdrop { position: absolute; inset: 0; background: radial-gradient(ellipse at 48% 48%, #293f65 0%, #182b4a 48%, #101c35 100%); }
 #storyIntro p { grid-area: 1 / 1; position: relative; margin: 0; padding: 20px; max-width: 92vw; opacity: 0; }
 #storyIntro .storyText { position: relative; display: inline-block; white-space: nowrap;
-  text-shadow: 0 0 5px #ffe2a066, 0 0 24px #e4ba6c44;
-  -webkit-mask-image: linear-gradient(90deg, #000 calc(var(--ink, -5%) - 3%), transparent calc(var(--ink, -5%) + 2%));
-  mask-image: linear-gradient(90deg, #000 calc(var(--ink, -5%) - 3%), transparent calc(var(--ink, -5%) + 2%)); }
-#storyIntro .storyText::after { content: attr(data-text); position: absolute; inset: 0; color: transparent;
-  background: linear-gradient(105deg, transparent 35%, #fffdf1 49%, #ffe7a5 52%, transparent 65%);
-  background-size: 250% 100%; background-position: var(--gleam, 100%) 0;
-  -webkit-background-clip: text; background-clip: text; opacity: .75; }
+  text-shadow: 0 0 5px #ffe2a066, 0 0 24px #e4ba6c44; }
 #jnLogo { position: absolute; left: 50%; bottom: calc(50% + 64px); transform: translateX(-50%);
   width: clamp(160px, 36vw, 220px); height: auto; overflow: visible; opacity: 0;
   filter: drop-shadow(0 0 8px #efce8f44); }
@@ -383,8 +377,8 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
       </g>
       <path id="jnLogoStar" d="M242,56 L243.5,61.5 L249,63 L243.5,64.5 L242,70 L240.5,64.5 L235,63 L240.5,61.5Z" opacity="0"/>
     </svg>
-    <p><span class="storyText" data-text="Once upon a time…">Once upon a time…</span></p>
-    <p><span class="storyText" data-text="There was a little cat…">There was a little cat…</span></p>
+    <p><span class="storyText">Once upon a time…</span></p>
+    <p><span class="storyText">There was a little cat…</span></p>
   </div>
 </div>
 <button id="replay" type="button" hidden>Xem lại</button>
@@ -611,12 +605,12 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   let start = null;
   const hint = $('hint'), replay = $('replay'), vignette = $('vignette');
 
-  const STORY_LEAD = 7.4;
+  const STORY_LEAD = 13.3;
   const storyIntro = $('storyIntro');
   const storyLines = [...storyIntro.querySelectorAll('p')].map(line => ({ line, text: line.querySelector('.storyText') }));
   const logoStrokes = [
-    { path: $('jnArc'), from: .2, to: 1.7 }, { path: $('jnLetterJ'), from: .15, to: 1.25 },
-    { path: $('jnLetterN'), from: .45, to: 1.65 }, { path: $('jnUnderline'), from: 1.2, to: 2 },
+    { path: $('jnArc'), from: 1.6, to: 4 }, { path: $('jnLetterJ'), from: .25, to: 2.4 },
+    { path: $('jnLetterN'), from: 1.2, to: 3.6 }, { path: $('jnUnderline'), from: 3.1, to: 4 },
   ].map(stroke => {
     const length = stroke.path.getTotalLength();
     stroke.path.setAttribute('stroke-dasharray', length);
@@ -652,20 +646,22 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   function renderStory(time) {
     storyIntro.hidden = !opened || time > STORY_LEAD + 4.5;
     if (storyIntro.hidden) return;
-    const dawn = easeInOut(prog(6.7, 8.8, time));
+    const dawn = easeInOut(prog(12.6, 14.7, time));
     storyIntro.style.opacity = easeOut(prog(0, .65, time));
     $('storyBackdrop').style.opacity = 1 - dawn;
-    $('jnLogo').style.opacity = easeOut(prog(.1, .65, time)) * (1 - easeInOut(prog(6.6, 7.5, time)));
+    $('jnLogo').style.opacity = easeOut(prog(.1, .65, time)) * (1 - easeInOut(prog(12.2, 13.4, time)));
     logoStrokes.forEach(({ path, from, to, length }) => path.setAttribute('stroke-dashoffset', reduce ? 0 : length * (1 - easeInOut(prog(from, to, time)))));
-    $('jnLogoStar').setAttribute('opacity', easeOut(prog(1.25, 1.7, time)) * .95);
+    $('jnLogoStar').setAttribute('opacity', easeOut(prog(3.55, 4, time)) * .95);
     const boxes = storyLines.map(({ text }) => text.getBoundingClientRect());
-    storyLines.forEach(({ line, text }, i) => {
-      const appear = i === 0 ? .8 : 4, written = i === 0 ? 2.4 : 5.8, disappear = i === 0 ? 3.2 : 6.6;
-      const reveal = easeInOut(prog(appear, written, time));
-      line.style.opacity = easeOut(prog(appear, appear + .35, time)) * (1 - easeInOut(prog(disappear, disappear + .6, time)));
-      // Reveal the intact cursive text with a feathered mask, preserving its joined strokes.
-      text.style.setProperty('--ink', (reduce ? 110 : lerp(-5, 110, reveal)) + '%');
-      text.style.setProperty('--gleam', lerp(120, -20, prog(appear, written + 1, time)) + '%');
+    storyLines.forEach(({ line }, i) => {
+      // Finish drawing JN at 4 s, pause for a full second, then introduce each sentence.
+      const appear = i === 0 ? 5 : 9.1, disappear = i === 0 ? 8 : 12.2;
+      const enter = easeInOut(prog(appear, appear + 1.4, time));
+      const exit = easeInOut(prog(disappear, disappear + .8, time));
+      const zoom = easeInOut(prog(appear, disappear, time));
+      line.style.opacity = enter * (1 - exit);
+      line.style.transform = `scale(${reduce ? 1 : lerp(.92, 1, zoom)})`;
+      line.style.filter = reduce ? 'none' : `blur(${6 * (1 - enter) + 2 * exit}px)`;
     });
     storyStars.forEach((star, i) => star.setAttribute('opacity', (reduce ? .35 : .2 + .35 * (1 + Math.sin(time * .9 + i * 2.3)) / 2) * (1 - dawn)));
     const matrix = svgEl.getScreenCTM();
@@ -674,29 +670,28 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     const crown = new DOMPoint(catCrown.x, catCrown.y).matrixTransform(matrix);
     const pointAt = at => {
       const first = boxes[0], second = boxes[1];
-      const midY = box => box.top + box.height * .55;
-      if (at <= 2.4) {
-        const p = easeInOut(prog(.8, 2.4, at));
-        return { x: first.left + first.width * p, y: midY(first) - Math.sin(p * Math.PI) * 12 };
+      if (at <= 8) {
+        const p = easeInOut(prog(5, 8, at));
+        return { x: first.left + first.width * p, y: first.bottom + 12 - Math.sin(p * Math.PI) * 10 };
       }
-      if (at < 4) {
-        const p = easeInOut(prog(2.4, 4, at));
-        return { x: lerp(first.right, second.left, p), y: lerp(midY(first), midY(second), p) - Math.sin(p * Math.PI) * 65 };
+      if (at < 9.1) {
+        const p = easeInOut(prog(8, 9.1, at));
+        return { x: lerp(first.right, second.left, p), y: lerp(first.bottom + 12, second.bottom + 12, p) - Math.sin(p * Math.PI) * 55 };
       }
-      if (at <= 5.8) {
-        const p = easeInOut(prog(4, 5.8, at));
-        return { x: second.left + second.width * p, y: midY(second) - Math.sin(p * Math.PI) * 12 };
+      if (at <= 12.2) {
+        const p = easeInOut(prog(9.1, 12.2, at));
+        return { x: second.left + second.width * p, y: second.bottom + 12 - Math.sin(p * Math.PI) * 10 };
       }
       // Use the displayed SVG matrix, including its entrance motion and letterboxing.
-      const p = easeInOut(prog(5.8, 10.3, at)), q = 1 - p;
-      const start = { x: second.right, y: midY(second) };
+      const p = easeInOut(prog(12.2, 16.2, at)), q = 1 - p;
+      const start = { x: second.right, y: second.bottom + 12 };
       const bend = Math.min(innerWidth * .15, 75);
       const x = q ** 3 * start.x + 3 * q * q * p * (start.x + bend) + 3 * q * p * p * (landing.x + bend) + p ** 3 * landing.x;
       const y = q ** 3 * start.y + 3 * q * q * p * (start.y + 25) + 3 * q * p * p * (landing.y - 65) + p ** 3 * landing.y;
-      const follow = easeInOut(prog(9.8, 10.8, at));
+      const follow = easeInOut(prog(15.7, 16.7, at));
       return { x: lerp(x, crown.x, follow), y: lerp(y, crown.y, follow) };
     };
-    const magic = reduce ? 0 : easeInOut(prog(.65, .9, time)) * (1 - easeInOut(prog(11, 11.7, time)));
+    const magic = reduce ? 0 : easeInOut(prog(5, 5.6, time)) * (1 - easeInOut(prog(16.9, 17.6, time)));
     const tip = pointAt(time);
     $('storyWand').setAttribute('opacity', magic);
     $('storyWand').setAttribute('transform', `translate(${tip.x},${tip.y}) rotate(${time * 18})`);
@@ -704,7 +699,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
       const at = time - i * .018, p = pointAt(at), tail = i / storyDust.length;
       dust.setAttribute('cx', p.x + Math.sin(time * 7 + i * 3) * tail * 4);
       dust.setAttribute('cy', p.y + Math.sin(time * 10 + i) * tail * 6);
-      dust.setAttribute('opacity', at < .8 ? 0 : magic * (1 - tail) ** 1.4 * .8);
+      dust.setAttribute('opacity', at < 5 ? 0 : magic * (1 - tail) ** 1.4 * .8);
     });
   }
   function bloom() {
