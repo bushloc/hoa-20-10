@@ -87,14 +87,20 @@ button:focus-visible { outline: 3px solid var(--leaf); outline-offset: 2px; }
 /* Storybook opening, followed by the illustrated scene. */
 #intro { position: fixed; inset: 0; display: grid; place-items: center; pointer-events: none;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
-#storyIntro { position: absolute; inset: 0; display: grid; place-items: center; color: #795643;
-  font: 600 clamp(32px, 7.5vw, 48px)/1.35 var(--display); text-align: center; }
-#storyIntro p { grid-area: 1 / 1; margin: 0; padding: 24px; max-width: min(90vw, 640px); opacity: 0; }
-#storyIntro span { display: inline-block; opacity: 0; }
-#storyIntro::before, #storyIntro::after { content: '✧'; position: absolute; color: #d6b66b; font-size: 19px;
-  animation: twinkle 3s ease-in-out infinite; }
-#storyIntro::before { left: calc(50% - 135px); top: calc(50% - 65px); }
-#storyIntro::after { left: calc(50% + 115px); top: calc(50% + 48px); animation-delay: -1.5s; }
+#storyIntro { position: absolute; inset: 0; display: grid; place-items: center; overflow: hidden;
+  background: radial-gradient(ellipse at 48% 48%, #293f65 0%, #182b4a 48%, #101c35 100%);
+  color: #fff3d6; font: 600 clamp(32px, 7.5vw, 50px)/1.4 var(--display); text-align: center; opacity: 0; }
+#storyIntro p { grid-area: 1 / 1; position: relative; margin: 0; padding: 20px; max-width: 92vw; opacity: 0; }
+#storyIntro .storyText { position: relative; display: inline-block; white-space: nowrap;
+  text-shadow: 0 0 5px #ffe2a066, 0 0 24px #e4ba6c44;
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(var(--ink, -5%) - 3%), transparent calc(var(--ink, -5%) + 2%));
+  mask-image: linear-gradient(90deg, #000 calc(var(--ink, -5%) - 3%), transparent calc(var(--ink, -5%) + 2%)); }
+#storyIntro .storyText::after { content: attr(data-text); position: absolute; inset: 0; color: transparent;
+  background: linear-gradient(105deg, transparent 35%, #fffdf1 49%, #ffe7a5 52%, transparent 65%);
+  background-size: 250% 100%; background-position: var(--gleam, 100%) 0;
+  -webkit-background-clip: text; background-clip: text; opacity: .75; }
+#storyMagic { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+#storyWand { fill: #fff9df; filter: drop-shadow(0 0 4px #fff5c1) drop-shadow(0 0 12px #ebc77d); }
 #stage svg, #bg { opacity: 0; transform: translateY(26px); transition: opacity 1.4s ease, transform 1.7s cubic-bezier(.2, .8, .2, 1); }
 body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
 .spark { position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; margin: -3.5px; border-radius: 50%;
@@ -103,7 +109,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
 @keyframes burst { to { transform: translate(var(--x), var(--y)) scale(.2); opacity: 0; } }
 @keyframes twinkle { 0%, 100% { opacity: .6; } 50% { opacity: 1; } }
 
-@media (prefers-reduced-motion: reduce) { #hint, #replay, #storyIntro::before, #storyIntro::after { animation: none; } #storyIntro span { transform: none !important; } .bp { display: none; } }
+@media (prefers-reduced-motion: reduce) { #hint, #replay { animation: none; } .bp { display: none; } }
 </style>
 </head>
 <body>
@@ -352,8 +358,13 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
 <div id="intro">
   <div id="hint">Bấm vào đây,<br>điều kì diệu sẽ diễn ra ✨</div>
   <div id="storyIntro" lang="en" role="status" hidden>
-    <p><span>Once</span> <span>upon</span> <span>a</span> <span>time…</span></p>
-    <p><span>There</span> <span>was</span> <span>a</span> <span>little</span> <span>cat…</span></p>
+    <svg id="storyMagic" aria-hidden="true">
+      <g id="storyStars" fill="#fff4d2"></g>
+      <g id="storyDust"></g>
+      <path id="storyWand" d="M0,-7 L1.5,-1.5 L7,0 L1.5,1.5 L0,7 L-1.5,1.5 L-7,0 L-1.5,-1.5Z"/>
+    </svg>
+    <p><span class="storyText" data-text="Once upon a time…">Once upon a time…</span></p>
+    <p><span class="storyText" data-text="There was a little cat…">There was a little cat…</span></p>
   </div>
 </div>
 <button id="replay" type="button" hidden>Xem lại</button>
@@ -580,9 +591,17 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   let start = null;
   const hint = $('hint'), replay = $('replay'), vignette = $('vignette');
 
-  const STORY_LEAD = 5.2;
+  const STORY_LEAD = 7.4;
   const storyIntro = $('storyIntro');
-  const storyLines = [...storyIntro.querySelectorAll('p')].map(line => ({ line, words: [...line.querySelectorAll('span')] }));
+  const storyLines = [...storyIntro.querySelectorAll('p')].map(line => ({ line, text: line.querySelector('.storyText') }));
+  const storyStars = Array.from({ length: 18 }, (_, i) => {
+    const star = mk('circle', { cx: (8 + i * 37 % 85) + '%', cy: (9 + i * 19 % 80) + '%', r: i % 3 === 0 ? 1.3 : .7 });
+    $('storyStars').appendChild(star); return star;
+  });
+  const storyDust = Array.from({ length: 42 }, (_, i) => {
+    const dust = mk('circle', { r: .7 + i % 4 * .3, fill: i % 3 ? '#f1cd85' : '#fff9e5', opacity: 0 });
+    $('storyDust').appendChild(dust); return dust;
+  });
   let opened = false, openAt = 0, openTimer;
   // One tap starts the two story lines, then the original planting sequence.
   function open() {
@@ -601,6 +620,52 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
       document.body.classList.add('open');
       openTimer = setTimeout(bloom, I.end * 1000);
     }, STORY_LEAD * 1000);
+  }
+  function renderStory(time) {
+    storyIntro.hidden = !opened || time > STORY_LEAD + 1;
+    if (storyIntro.hidden) return;
+    const dawn = easeInOut(prog(6.7, 8.2, time));
+    storyIntro.style.opacity = easeOut(prog(0, .65, time)) * (1 - dawn);
+    const boxes = storyLines.map(({ text }) => text.getBoundingClientRect());
+    storyLines.forEach(({ line, text }, i) => {
+      const appear = i === 0 ? .8 : 4, written = i === 0 ? 2.4 : 5.8, disappear = i === 0 ? 3.2 : 6.6;
+      const reveal = prog(appear, written, time);
+      line.style.opacity = easeOut(prog(appear, appear + .35, time)) * (1 - easeInOut(prog(disappear, disappear + .6, time)));
+      // Reveal the intact cursive text with a feathered mask, preserving its joined strokes.
+      text.style.setProperty('--ink', (reduce ? 110 : lerp(-5, 110, reveal)) + '%');
+      text.style.setProperty('--gleam', lerp(120, -20, prog(appear, written + 1, time)) + '%');
+    });
+    storyStars.forEach((star, i) => star.setAttribute('opacity', reduce ? .35 : .2 + .35 * (1 + Math.sin(time * .9 + i * 2.3)) / 2));
+    const pointAt = at => {
+      const first = boxes[0], second = boxes[1];
+      const midY = box => box.top + box.height * .55;
+      if (at <= 2.4) {
+        const p = prog(.8, 2.4, at);
+        return { x: first.left + first.width * p, y: midY(first) - Math.sin(p * Math.PI) * 12 };
+      }
+      if (at < 4) {
+        const p = easeInOut(prog(2.4, 4, at));
+        return { x: lerp(first.right, second.left, p), y: lerp(midY(first), midY(second), p) - Math.sin(p * Math.PI) * 65 };
+      }
+      if (at <= 5.8) {
+        const p = prog(4, 5.8, at);
+        return { x: second.left + second.width * p, y: midY(second) - Math.sin(p * Math.PI) * 12 };
+      }
+      const p = easeInOut(prog(5.8, 7.9, at));
+      const scale = Math.min(innerWidth / 400, innerHeight / 640);
+      return { x: lerp(second.right, (innerWidth - 400 * scale) / 2 + 60 * scale, p),
+        y: lerp(midY(second), (innerHeight - 640 * scale) / 2 + 465 * scale, p) - Math.sin(p * Math.PI) * 45 };
+    };
+    const magic = reduce ? 0 : prog(.65, .9, time) * (1 - prog(7.4, 8.1, time));
+    const tip = pointAt(time);
+    $('storyWand').setAttribute('opacity', magic);
+    $('storyWand').setAttribute('transform', `translate(${tip.x},${tip.y}) rotate(${time * 18})`);
+    storyDust.forEach((dust, i) => {
+      const at = time - i * .018, p = pointAt(at), tail = i / storyDust.length;
+      dust.setAttribute('cx', p.x + Math.sin(time * 7 + i * 3) * tail * 4);
+      dust.setAttribute('cy', p.y + Math.sin(time * 10 + i) * tail * 6);
+      dust.setAttribute('opacity', at < .8 ? 0 : magic * (1 - tail) ** 1.4 * .8);
+    });
   }
   function bloom() {
     if (start !== null) return;
@@ -642,16 +707,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
 
     const ot = opened ? Math.max(0, (now - openAt) / 1000) : 0;
     const storyTime = opened ? (now - openAt) / 1000 + STORY_LEAD : -1;
-    storyIntro.hidden = !opened || storyTime > STORY_LEAD + .5;
-    storyLines.forEach(({ line, words }, i) => {
-      const appear = i === 0 ? .55 : 3, disappear = i === 0 ? 2.5 : 4.9;
-      line.style.opacity = easeOut(prog(appear, appear + .5, storyTime)) * (1 - easeInOut(prog(disappear, disappear + .55, storyTime)));
-      words.forEach((word, j) => {
-        const shown = easeOut(prog(appear + j * .13, appear + j * .13 + .45, storyTime));
-        word.style.opacity = shown;
-        word.style.transform = `translateY(${reduce ? 0 : (1 - shown) * 6}px)`;
-      });
-    });
+    renderStory(storyTime);
 
     // kitten: waddles in, dips its head to set the seed down, steps back and curls up looking at the flower
     // The second butterfly rests on an ear, then a twitch sends it back to the flower.
