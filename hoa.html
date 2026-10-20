@@ -187,8 +187,6 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
         <path d="M4,6 Q5.5,8 7,6 Q8.5,8 10,6" fill="none" stroke="#5a4b55" stroke-width=".8" stroke-linecap="round"/>
         <path d="M15,5 L23,3.5 M15,7 L23,8" fill="none" stroke="#7f8290" stroke-width=".6"/>
       </g>
-      <!-- pink collar -->
-      <path d="M8,-23 Q17,-17 28,-22" fill="none" stroke="#f07fa0" stroke-width="3.4" stroke-linecap="round"/>
     </g>
     <g fill="#a9acb8"><g class="leg"><rect x="-4.5" y="0" width="9" height="11" rx="4.5"/><ellipse cx="0" cy="9" rx="4" ry="2.2" fill="#fff" stroke="none"/><ellipse cx="0" cy="9.6" rx="1.9" ry="1.1" fill="#f7a1b4" stroke="none"/></g><g class="leg"><rect x="-4.5" y="0" width="9" height="11" rx="4.5"/><ellipse cx="0" cy="9" rx="4" ry="2.2" fill="#fff" stroke="none"/><ellipse cx="0" cy="9.6" rx="1.9" ry="1.1" fill="#f7a1b4" stroke="none"/></g></g>
   </g>
@@ -500,8 +498,10 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     $('catUp').setAttribute('transform', `translate(0,${up}) rotate(${(moving ? step * 4 : 0) - 16 * sit},${sit ? -20 : 0},${sit ? -8 : -10})`);
     catLegs.forEach((leg, i) => {
       const front = i === 1 || i === 3;
-      const k = front ? lerp(lerp(1, .25, lie), 1.45, sit) : lerp(1, .25, lie);
-      leg.setAttribute('transform', `translate(${LEG_X[i]},${-11 + lie * 6 - (front ? sit * 11 : 0)}) rotate(${i === 0 || i === 3 ? swing : -swing}) scale(1,${k})`);
+      // sitting: front legs stretch down from the raised chest; back legs drop from the rump to stand on the ground
+      const k = lerp(lerp(1, .25, lie), front ? 1.45 : .64, sit);
+      const y = lerp(-11 + lie * 6, front ? -16 : -7, sit);
+      leg.setAttribute('transform', `translate(${LEG_X[i]},${y}) rotate(${i === 0 || i === 3 ? swing : -swing}) scale(1,${k})`);
     });
     $('catHead').setAttribute('transform', `translate(20,-38) rotate(${headA}) scale(1.12)`);
     const wag = reduce ? 0 : happy ? Math.sin(idle * 7) * 14 : Math.sin(idle * 2.4) * 8;
