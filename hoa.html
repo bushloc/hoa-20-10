@@ -11,8 +11,6 @@
 <style>
 /* One illustrated sheet: the plant grows in an SVG stage, a hint at the bottom, and butterflies write the note around the flower at the end. */
 :root {
-  --paper: #f6ebe8;
-  --paper-hi: #fdf7f4;
   --ink: #4a2c33;
   --ink-soft: #8a6670;
   --rose: #c81d47;
@@ -26,10 +24,10 @@
 html, body { height: 100%; }
 body {
   margin: 0; overflow: hidden;
-  /* paper grain over the soft gradient */
+  /* paper grain over a soft blue sky */
   background:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .25 0 0 0 0 .28 .35 0 0 0 -.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    radial-gradient(120% 80% at 50% 35%, var(--paper-hi), var(--paper));
+    linear-gradient(#9fd3f0, #d4ecf9 55%, #eef8fd);
   color: var(--ink); font-family: var(--body);
   -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
 }
