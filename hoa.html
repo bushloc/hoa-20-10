@@ -193,38 +193,37 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     <g fill="#a9acb8"><g class="leg"><rect x="-4.5" y="0" width="9" height="11" rx="4.5"/><ellipse cx="0" cy="9" rx="4" ry="2.2" fill="#fff" stroke="none"/><ellipse cx="0" cy="9.6" rx="1.9" ry="1.1" fill="#f7a1b4" stroke="none"/></g><g class="leg"><rect x="-4.5" y="0" width="9" height="11" rx="4.5"/><ellipse cx="0" cy="9" rx="4" ry="2.2" fill="#fff" stroke="none"/><ellipse cx="0" cy="9.6" rx="1.9" ry="1.1" fill="#f7a1b4" stroke="none"/></g></g>
   </g>
 
-  <!-- roots -->
-  <!-- roots, growing down from the base, spell "JN" -->
-  <!-- main strokes wobble like real roots; thin hair roots branch off them -->
-  <g id="roots" fill="none" stroke="#8a5f48" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M200,470 C197,477 191,481 188,487 C185,494 187,502 186,510 C185,518 188,526 186,534 C184,544 176,549 169,545 C165,543 164,539 166,535"/>
-    <path d="M200,470 C205,477 212,481 214,489 C216,497 213,505 214,513 C215,522 212,531 214,541"/>
-    <path d="M214,491 C219,500 224,507 228,515 C232,523 236,532 240,541 C239,532 242,522 240,513 C238,504 241,497 240,489"/>
-    <g stroke="#9a6f58" stroke-width="1.1" opacity=".85">
-      <path d="M187,500 C182,503 179,508 175,509"/>
-      <path d="M186,522 C191,525 193,530 197,531"/>
-      <path d="M168,545 C164,550 160,551 155,552"/>
-      <path d="M214,505 C209,508 207,513 203,515"/>
-      <path d="M231,521 C228,527 228,532 224,536"/>
-      <path d="M240,527 C245,529 248,534 253,535"/>
-      <path d="M240,500 C245,498 249,500 254,497"/>
-      <path d="M160,490 C156,484 151,483 147,479"/>
-      <path d="M250,486 C254,480 259,479 262,474"/>
-      <path d="M201,530 C206,533 207,538 211,540"/>
-      <path d="M136,512 C131,514 128,519 124,520"/>
-      <path d="M272,506 C277,507 280,512 285,512"/>
-    </g>
-    <!-- extra roots of the same colour so the letters sit half-hidden in a natural tangle -->
-    <g stroke-width="2">
-      <path d="M200,470 C192,478 176,482 160,490 C150,495 142,503 136,512" stroke-width="2.4"/>
-      <path d="M200,470 C210,476 230,478 250,486 C260,490 266,498 272,506" stroke-width="2.4"/>
-      <path d="M200,470 C201,486 199,500 201,516 C202,530 198,542 200,556"/>
-      <path d="M186,516 C178,522 172,532 170,546" stroke-width="1.8"/>
-      <path d="M240,495 C250,502 256,512 260,526" stroke-width="1.8"/>
-      <path d="M214,541 C212,548 214,556 210,562" stroke-width="1.6"/>
-      <path d="M169,545 C172,552 170,558 174,564" stroke-width="1.4"/>
-      <path d="M223,502 C230,499 238,505 248,508" stroke-width="1.4"/>
-      <path d="M188,490 C180,494 176,500 168,502" stroke-width="1.4"/>
+  <!-- Uneven, branching roots grow first; a few later turns quietly suggest JN. -->
+  <g id="roots" fill="none" stroke="#8a5f48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path data-start="0" d="M200,470 C193,479 177,480 163,488 S146,501 134,509 S122,525 112,531"/>
+    <path data-start=".12" d="M200,470 C210,479 229,479 245,486 S263,502 275,508 S284,520 290,526"/>
+    <path data-start=".08" d="M200,470 C198,485 203,495 200,508 S196,529 200,541 S196,554 197,566" stroke-width="2.2"/>
+    <path data-parent="0" d="M163,488 C164,499 153,507 155,518 S146,536 145,546" stroke-width="1.6"/>
+    <path data-parent="1" d="M245,486 C244,499 256,509 255,522 S264,540 260,552" stroke-width="1.7"/>
+    <path data-parent="2" d="M200,508 C189,514 181,514 175,525 S167,540 158,544" stroke-width="1.6"/>
+    <path data-parent="2" d="M200,508 C209,515 223,517 229,527 S240,543 248,547" stroke-width="1.6"/>
+    <!-- The hook and the three uneven forks share the roots' weight and colour. -->
+    <path data-parent="0" d="M193,480 C185,488 189,498 185,508 S187,524 183,534 C180,542 174,545 169,541 Q165,538 167,535" stroke-width="1.8"/>
+    <path data-parent="1" d="M210,479 C216,489 210,500 214,511 S211,529 214,541" stroke-width="1.7"/>
+    <path data-parent="8" d="M214,498 C222,503 221,512 228,518 S233,531 240,538" stroke-width="1.7"/>
+    <path data-parent="1" d="M237,483 C243,492 236,501 240,510 S236,527 240,538 C243,544 240,551 244,557" stroke-width="1.8"/>
+    <g stroke-width=".85" opacity=".85">
+      <path data-parent="0" d="M134,509 C133,518 138,522 132,530 S132,538 128,543"/>
+      <path data-parent="3" d="M155,518 C160,523 160,530 165,532"/>
+      <path data-parent="0" d="M151,498 C144,496 139,500 132,497"/>
+      <path data-parent="7" d="M185,508 C178,507 174,514 168,514"/>
+      <path data-parent="7" d="M183,532 C189,537 185,546 188,551"/>
+      <path data-parent="7" d="M174,543 C177,550 170,556 173,562"/>
+      <path data-parent="8" d="M214,511 C207,516 211,521 207,526"/>
+      <path data-parent="8" d="M214,541 C209,547 213,555 208,561"/>
+      <path data-parent="9" d="M228,518 C224,525 226,532 222,537"/>
+      <path data-parent="10" d="M240,524 C246,525 248,532 253,534"/>
+      <path data-parent="10" d="M240,500 C246,497 250,501 254,497"/>
+      <path data-parent="1" d="M265,499 C271,496 276,500 281,497"/>
+      <path data-parent="1" d="M275,508 C270,515 275,521 271,526"/>
+      <path data-parent="4" d="M255,522 C248,528 252,537 248,541"/>
+      <path data-parent="2" d="M199,536 C206,541 202,548 206,553"/>
+      <path data-parent="3" d="M145,540 C138,540 136,546 131,548"/>
     </g>
   </g>
 
@@ -319,7 +318,27 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   /* stem and leaves */
   const stem = $('stem'), stemLen = stem.getTotalLength();
   stem.style.strokeDasharray = stemLen;
-  const roots = [...$('roots').querySelectorAll('path')].map(p => { const L = p.getTotalLength(); p.style.strokeDasharray = L; return { p, L }; });
+  const roots = [];
+  $('roots').querySelectorAll('path').forEach(p => {
+    let delay = Number(p.dataset.start || 0);
+    if (p.dataset.parent !== undefined) {
+      const parent = roots[Number(p.dataset.parent)];
+      const origin = p.getPointAtLength(0);
+      let branchAt = 0, distance = Infinity;
+      // Anchor each fork to the actual parent curve, then wait for its growing tip.
+      for (let s = 0; s <= parent.L; s += .25) {
+        const point = parent.p.getPointAtLength(s);
+        const d = Math.hypot(point.x - origin.x, point.y - origin.y);
+        if (d < distance) { distance = d; branchAt = s; }
+      }
+      const joint = parent.p.getPointAtLength(branchAt);
+      p.setAttribute('d', p.getAttribute('d').replace(/^M[\d.,-]+/, `M${joint.x},${joint.y}`));
+      delay = parent.delay + branchAt / 65 + .08;
+    }
+    const L = p.getTotalLength();
+    p.style.strokeDasharray = L;
+    roots.push({ p, L, delay });
+  });
   // fraction is measured from the soil upward along the stem
   const LEAVES = [
     { f: .2, side: 1, rot: -28, s: .95 }, { f: .33, side: -1, rot: -22, s: 1 },
@@ -624,10 +643,10 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     seedR.setAttribute('transform', `translate(${crack * 7},0) rotate(${crack * 32},0,14)`);
     seed.setAttribute('opacity', 1 - prog(2.4, 3.4, t));
 
-    // the three letter strokes first, then the other roots sprout one after another
-    roots.forEach(({ p, L }, i) => {
-      const s0 = T.roots[0] + (i < 3 ? i * .15 : .4 + (i - 3) * .06);
-      p.style.strokeDashoffset = L * (1 - easeOut(prog(s0, s0 + 1.2, t)));
+    // Each tip advances at the same speed; forks begin only after the parent reaches them.
+    roots.forEach(({ p, L, delay }) => {
+      const s0 = T.roots[0] + delay;
+      p.style.strokeDashoffset = L * (1 - prog(s0, s0 + L / 65, t));
     });
 
     const sp = easeInOut(prog(...T.stem, t));
