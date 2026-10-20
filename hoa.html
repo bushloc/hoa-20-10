@@ -195,10 +195,20 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
 
   <!-- roots -->
   <!-- roots, growing down from the base, spell "JN" -->
-  <g id="roots" fill="none" stroke="#8a5f48" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M200,470 C196,480 188,486 186,494 C186,510 187,524 186,536 C185,549 170,551 166,539"/>
-    <path d="M200,470 C206,480 214,484 214,494 C214,510 215,526 214,540"/>
-    <path d="M214,494 C222,508 232,526 240,540 C240,524 241,508 240,494"/>
+  <!-- main strokes wobble like real roots; thin hair roots branch off them -->
+  <g id="roots" fill="none" stroke="#8a5f48" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M200,470 C197,477 191,481 188,487 C185,494 187,502 186,510 C185,518 188,526 186,534 C184,544 176,549 169,545 C165,543 164,539 166,535"/>
+    <path d="M200,470 C205,477 212,481 214,489 C216,497 213,505 214,513 C215,522 212,531 214,541"/>
+    <path d="M214,491 C219,500 224,507 228,515 C232,523 236,532 240,541 C239,532 242,522 240,513 C238,504 241,497 240,489"/>
+    <g stroke="#9a6f58" stroke-width="1.1" opacity=".85">
+      <path d="M187,500 C182,503 179,508 175,509"/>
+      <path d="M186,522 C191,525 193,530 197,531"/>
+      <path d="M168,545 C164,550 160,551 155,552"/>
+      <path d="M214,505 C209,508 207,513 203,515"/>
+      <path d="M231,521 C228,527 228,532 224,536"/>
+      <path d="M240,527 C245,529 248,534 253,535"/>
+      <path d="M240,500 C245,498 249,500 254,497"/>
+    </g>
   </g>
 
   <!-- stem and leaves -->
@@ -292,7 +302,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   /* stem and leaves */
   const stem = $('stem'), stemLen = stem.getTotalLength();
   stem.style.strokeDasharray = stemLen;
-  const roots = [...$('roots').children].map(p => { const L = p.getTotalLength(); p.style.strokeDasharray = L; return { p, L }; });
+  const roots = [...$('roots').querySelectorAll('path')].map(p => { const L = p.getTotalLength(); p.style.strokeDasharray = L; return { p, L }; });
   // fraction is measured from the soil upward along the stem
   const LEAVES = [
     { f: .2, side: 1, rot: -28, s: .95 }, { f: .33, side: -1, rot: -22, s: 1 },
@@ -597,7 +607,8 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     seedR.setAttribute('transform', `translate(${crack * 7},0) rotate(${crack * 32},0,14)`);
     seed.setAttribute('opacity', 1 - prog(2.4, 3.4, t));
 
-    roots.forEach(({ p, L }, i) => { p.style.strokeDashoffset = L * (1 - easeOut(prog(T.roots[0] + i * .15, T.roots[1], t))); });
+    // the three letter strokes first, then the hair roots sprout one after another
+    roots.forEach(({ p, L }, i) => { p.style.strokeDashoffset = L * (1 - easeOut(prog(T.roots[0] + (i < 3 ? i * .15 : .5 + (i - 3) * .1), T.roots[1], t))); });
 
     const sp = easeInOut(prog(...T.stem, t));
     stem.style.strokeDashoffset = stemLen * (1 - sp);
