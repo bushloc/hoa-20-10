@@ -99,7 +99,7 @@ button:focus-visible { outline: 3px solid var(--leaf); outline-offset: 2px; }
   width: clamp(160px, 36vw, 220px); height: auto; overflow: visible; opacity: 0;
   filter: drop-shadow(0 0 8px #efce8f44); }
 #jnLogo path { stroke-linecap: round; stroke-linejoin: round; }
-#jnSweep { filter: drop-shadow(0 0 3px #fff0b8); }
+#jnSweep { filter: drop-shadow(0 0 3px #ffe8a3) drop-shadow(0 0 8px #f6cc76); }
 #jnLogoStar { fill: #fff5cd; filter: drop-shadow(0 0 4px #f5d68a); }
 #storyMagic { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 #storyWand { fill: #fff9df; filter: drop-shadow(0 0 4px #fff5c1) drop-shadow(0 0 12px #ebc77d); }
@@ -371,10 +371,11 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
         <linearGradient id="gJNGold" x1="0" y1="0" x2=".35" y2="1">
           <stop offset="0" stop-color="#fff9e6"/><stop offset=".6" stop-color="#f6e3b5"/><stop offset="1" stop-color="#dcb878"/>
         </linearGradient>
-        <linearGradient id="gJNShine"><stop offset="0" stop-color="#fffdf1" stop-opacity="0"/><stop offset=".5" stop-color="#fffdf1"/><stop offset="1" stop-color="#fffdf1" stop-opacity="0"/></linearGradient>
-        <mask id="jnShineMask" maskUnits="userSpaceOnUse" x="0" y="0" width="280" height="160">
-          <g fill="none" stroke="#fff"><use href="#jnLetterJ"/><use href="#jnLetterN"/><use href="#jnArc"/><use href="#jnUnderline"/></g>
-        </mask>
+        <linearGradient id="gJNStreak" gradientUnits="userSpaceOnUse" x1="-110" y1="88" x2="16" y2="88">
+          <stop offset="0" stop-color="#ffd682" stop-opacity="0"/>
+          <stop offset=".3" stop-color="#ffe7a6" stop-opacity=".5"/>
+          <stop offset=".8" stop-color="#fffdf1"/><stop offset="1" stop-color="#fffdf1" stop-opacity="0"/>
+        </linearGradient>
       </defs>
       <g fill="none" stroke="url(#gJNGold)">
         <path id="jnArc" d="M38,80 C43,7 186,-14 242,63" stroke-width="1.5" opacity=".65"/>
@@ -382,7 +383,12 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
         <path id="jnLetterN" d="M137,123 C143,103 142,78 149,57 C153,53 155,68 160,78 C170,98 179,111 188,120 C191,96 195,70 205,56 C212,46 221,53 214,61" stroke-width="5.5"/>
         <path id="jnUnderline" d="M76,141 C115,130 162,137 204,125" stroke-width="1.6" opacity=".7"/>
       </g>
-      <g mask="url(#jnShineMask)"><rect id="jnSweep" x="-70" y="0" width="65" height="160" fill="url(#gJNShine)" opacity="0"/></g>
+      <!-- A visible horizontal streak crosses the full logo, independently of the story light. -->
+      <g id="jnSweep" transform="translate(-15,0)" opacity="0">
+        <path d="M-110,88 H16" fill="none" stroke="url(#gJNStreak)" stroke-width="7" opacity=".65"/>
+        <path d="M-110,88 H16" fill="none" stroke="url(#gJNStreak)" stroke-width="1.6"/>
+        <ellipse cx="-5" cy="88" rx="14" ry="1.2" fill="#fffdf0"/>
+      </g>
       <path id="jnLogoStar" d="M242,56 L243.5,61.5 L249,63 L243.5,64.5 L242,70 L240.5,64.5 L235,63 L240.5,61.5Z" opacity="0"/>
     </svg>
     <p><span class="storyText">Once Upon a Time....</span></p>
@@ -614,16 +620,16 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   let start = null;
   const hint = $('hint'), replay = $('replay'), vignette = $('vignette');
 
-  const STORY_LEAD = 16;
-  const LOGO_SWEEP = [2.8, 3.6];
+  const STORY_LEAD = 15.4;
+  const LOGO_SWEEP = [2, 2.8];
   const STORY_CUES = [
-    { appear: 4.4, disappear: 7.1 }, { appear: 8.1, disappear: 10.8 }, { appear: 11.8, disappear: 14.9 },
+    { appear: 3.8, disappear: 6.5 }, { appear: 7.5, disappear: 10.2 }, { appear: 11.2, disappear: 14.3 },
   ];
   const storyIntro = $('storyIntro');
   const storyLines = [...storyIntro.querySelectorAll('p')].map(line => ({ line, text: line.querySelector('.storyText') }));
   const logoStrokes = [
-    { path: $('jnArc'), from: 1.12, to: LOGO_SWEEP[0] }, { path: $('jnLetterJ'), from: .175, to: 1.68 },
-    { path: $('jnLetterN'), from: .84, to: 2.52 }, { path: $('jnUnderline'), from: 2.17, to: LOGO_SWEEP[0] },
+    { path: $('jnArc'), from: .8, to: LOGO_SWEEP[0] }, { path: $('jnLetterJ'), from: .125, to: 1.2 },
+    { path: $('jnLetterN'), from: .6, to: 1.8 }, { path: $('jnUnderline'), from: 1.55, to: LOGO_SWEEP[0] },
   ].map(stroke => {
     const length = stroke.path.getTotalLength();
     stroke.path.setAttribute('stroke-dasharray', length);
@@ -676,9 +682,9 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     $('welcomeSky').style.opacity = 1 - dawn;
     $('jnLogo').style.opacity = easeOut(prog(.1, .65, time)) * (1 - easeInOut(prog(STORY_CUES[2].disappear, STORY_LEAD + .1, time)));
     logoStrokes.forEach(({ path, from, to, length }) => path.setAttribute('stroke-dashoffset', reduce ? 0 : length * (1 - easeInOut(prog(from, to, time)))));
-    $('jnLogoStar').setAttribute('opacity', easeOut(prog(2.485, LOGO_SWEEP[0], time)) * .95);
+    $('jnLogoStar').setAttribute('opacity', easeOut(prog(1.775, LOGO_SWEEP[0], time)) * .95);
     const sweep = easeInOut(prog(...LOGO_SWEEP, time));
-    $('jnSweep').setAttribute('x', lerp(-70, 280, sweep));
+    $('jnSweep').setAttribute('transform', `translate(${lerp(-15, 305, sweep)},0)`);
     $('jnSweep').setAttribute('opacity', reduce ? 0 : prog(LOGO_SWEEP[0], LOGO_SWEEP[0] + .1, time) * (1 - easeInOut(prog(LOGO_SWEEP[1], LOGO_SWEEP[1] + .5, time))));
     // Stable text anchors keep the light independent of the gentle upward text motion.
     const boxes = storyLines.map(({ text }) => ({
