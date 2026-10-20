@@ -182,31 +182,41 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     </g>
   </g>
 
-  <!-- cat: carries the seed in, sets it down, hops back and sits -->
+  <!-- cat: chubby grey kitten that carries the seed in, sets it down, hops back and sits -->
   <g id="cat" transform="translate(-300,470)">
-    <ellipse id="catShadow" cx="0" cy="1" rx="36" ry="5" fill="#6a3e32" opacity=".16"/>
-    <g id="catTail" transform="translate(-29,-24)">
-      <path d="M0,0 C-16,-4 -22,-22 -13,-36" fill="none" stroke="#c48a5e" stroke-width="9" stroke-linecap="round"/>
-      <path d="M0,0 C-16,-4 -22,-22 -13,-36" fill="none" stroke="#fff1df" stroke-width="6.8" stroke-linecap="round"/>
-      <path d="M-19,-22 C-16,-28 -14,-31 -13,-36" fill="none" stroke="#f1a65f" stroke-width="6.8" stroke-linecap="round"/>
+    <ellipse id="catShadow" cx="0" cy="1" rx="38" ry="5.5" fill="#4a4258" opacity=".16"/>
+    <g id="catTail" transform="translate(-26,-26)">
+      <path d="M0,0 C-18,-2 -27,-20 -16,-37" fill="none" stroke="#646c7b" stroke-width="13.4" stroke-linecap="round"/>
+      <path d="M0,0 C-18,-2 -27,-20 -16,-37" fill="none" stroke="#a6adb9" stroke-width="11" stroke-linecap="round"/>
+      <path d="M-22,-16 C-21,-26 -19,-31 -16,-37" fill="none" stroke="#7d8596" stroke-width="11" stroke-linecap="round"/>
     </g>
     <g id="catBody">
-      <g id="legBF"><rect x="-3.5" y="0" width="7" height="15" rx="3.5" fill="#f0dcc4" stroke="#c48a5e" stroke-width="1.2"/></g>
-      <g id="legFF"><rect x="-3.5" y="0" width="7" height="15" rx="3.5" fill="#f0dcc4" stroke="#c48a5e" stroke-width="1.2"/></g>
-      <g id="legBN"><rect x="-3.5" y="0" width="7" height="15" rx="3.5" fill="#fff1df" stroke="#c48a5e" stroke-width="1.2"/></g>
-      <g id="legFN"><rect x="-3.5" y="0" width="7" height="15" rx="3.5" fill="#fff1df" stroke="#c48a5e" stroke-width="1.2"/></g>
-      <ellipse cx="0" cy="-26" rx="30" ry="15" fill="#fff1df" stroke="#c48a5e" stroke-width="1.3"/>
-      <ellipse cx="-8" cy="-34" rx="15" ry="7" transform="rotate(-8 -8 -34)" fill="#f1a65f"/>
-      <ellipse id="catHaunch" cx="-20" cy="-13" rx="16" ry="14" fill="#fff1df" stroke="#c48a5e" stroke-width="1.3" opacity="0"/>
-      <g id="catHead" transform="translate(30,-34)">
-        <polygon points="-1,-15 1,-30 10,-20" fill="#f1a65f" stroke="#c48a5e" stroke-width="1.2" stroke-linejoin="round"/>
-        <polygon points="9,-19 18,-29 20,-14" fill="#fff1df" stroke="#c48a5e" stroke-width="1.2" stroke-linejoin="round"/>
-        <polygon points="11.5,-20 17,-26 18,-17" fill="#f6b9b0"/>
-        <circle cx="8" cy="-8" r="13" fill="#fff1df" stroke="#c48a5e" stroke-width="1.3"/>
-        <ellipse cx="2" cy="-14" rx="6" ry="4.5" fill="#f1a65f"/>
-        <g id="catEye"><ellipse cx="13" cy="-10" rx="1.9" ry="2.5" fill="#4a2c33"/><circle cx="13.6" cy="-11" r=".7" fill="#fff"/></g>
-        <polygon points="19,-7 23,-7 21,-4.2" fill="#f48aa0"/>
-        <path d="M18,-4 L27,-6 M18,-3 L27,-2 M17,-5 L25,-10" stroke="#c48a5e" stroke-width=".8" stroke-linecap="round" opacity=".7"/>
+      <g id="legBF"><rect x="-4.5" y="0" width="9" height="11" rx="4.5" fill="#959cab" stroke="#646c7b" stroke-width="1.2"/><ellipse cx="0" cy="8.4" rx="5.2" ry="4" fill="#e9ecf2" stroke="#646c7b" stroke-width="1.2"/></g>
+      <g id="legFF"><rect x="-4.5" y="0" width="9" height="11" rx="4.5" fill="#959cab" stroke="#646c7b" stroke-width="1.2"/><ellipse cx="0" cy="8.4" rx="5.2" ry="4" fill="#e9ecf2" stroke="#646c7b" stroke-width="1.2"/></g>
+      <g id="legBN"><rect x="-4.5" y="0" width="9" height="11" rx="4.5" fill="#a6adb9" stroke="#646c7b" stroke-width="1.2"/><ellipse cx="0" cy="8.4" rx="5.2" ry="4" fill="#fbfbfd" stroke="#646c7b" stroke-width="1.2"/></g>
+      <g id="legFN"><rect x="-4.5" y="0" width="9" height="11" rx="4.5" fill="#a6adb9" stroke="#646c7b" stroke-width="1.2"/><ellipse cx="0" cy="8.4" rx="5.2" ry="4" fill="#fbfbfd" stroke="#646c7b" stroke-width="1.2"/></g>
+      <ellipse cx="0" cy="-27" rx="27" ry="21" fill="#a6adb9" stroke="#646c7b" stroke-width="1.3"/>
+      <ellipse cx="7" cy="-17" rx="15" ry="10" fill="#fbfbfd"/>
+      <path d="M-13,-47 q2,6 -1,10 M-4,-48 q2,6 -1,11 M5,-47 q2,6 -1,10" fill="none" stroke="#7d8596" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+      <g id="catHaunch" opacity="0">
+        <ellipse cx="-17" cy="-14" rx="18" ry="16" fill="#a6adb9" stroke="#646c7b" stroke-width="1.3"/>
+        <ellipse cx="-5" cy="-1" rx="10" ry="4.2" fill="#fbfbfd" stroke="#646c7b" stroke-width="1.2"/>
+      </g>
+      <g id="catHead" transform="translate(24,-38)">
+        <path d="M-6,-21 C-9,-35 3,-38 9,-28 Z" fill="#a6adb9" stroke="#646c7b" stroke-width="1.2" stroke-linejoin="round"/>
+        <path d="M-3,-24 C-4,-32 2,-33 5,-28 Z" fill="#f4b6c2"/>
+        <path d="M11,-27 C15,-38 26,-33 22,-18 Z" fill="#a6adb9" stroke="#646c7b" stroke-width="1.2" stroke-linejoin="round"/>
+        <path d="M14,-28 C17,-34 22,-31 20,-23 Z" fill="#f4b6c2"/>
+        <circle cx="6" cy="-10" r="17" fill="#a6adb9" stroke="#646c7b" stroke-width="1.3"/>
+        <path d="M2,-26 v5 M6,-27 v6 M10,-26 v5" fill="none" stroke="#7d8596" stroke-width="2.2" stroke-linecap="round" opacity=".8"/>
+        <ellipse cx="14" cy="-3" rx="8.5" ry="6.5" fill="#fbfbfd"/>
+        <ellipse cx="8.5" cy="-3" rx="3.6" ry="2.3" fill="#f6a8b8" opacity=".75"/>
+        <g id="catEye">
+          <ellipse cx="1" cy="-10" rx="3" ry="3.9" fill="#2f2530"/><circle cx="1.9" cy="-11.6" r="1.2" fill="#fff"/><circle cx="0" cy="-8.3" r=".55" fill="#fff"/>
+          <ellipse cx="13.5" cy="-10" rx="3.5" ry="4.4" fill="#2f2530"/><circle cx="14.6" cy="-11.8" r="1.35" fill="#fff"/><circle cx="12.4" cy="-8.2" r=".6" fill="#fff"/>
+        </g>
+        <polygon points="17.6,-6.6 22,-6.6 19.8,-3.8" fill="#f48aa0"/>
+        <path d="M19.8,-3.8 q-1.2,2.8 -3.4,1.5 M19.8,-3.8 q1.2,2.8 3.4,1.5" fill="none" stroke="#646c7b" stroke-width=".9" stroke-linecap="round"/>
       </g>
     </g>
   </g>
@@ -460,13 +470,13 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   const CAT = $('cat'), catTail = $('catTail'), catBody = $('catBody'), catHead = $('catHead'), catEye = $('catEye'),
     catShadow = $('catShadow'), haunch = $('catHaunch'), wet = $('wet'), dim = $('dim');
   const legs = { bf: $('legBF'), ff: $('legFF'), bn: $('legBN'), fn: $('legFN') };
-  const PX = -24, PY = -10, NX = 30, NY = -34, MOUTH = [19, -1];     // body pivot, neck pivot, mouth (head space)
-  const PLACE_X = 154, SIT_X = 94;                                    // where the cat sets the seed down, where it sits
+  const PX = -20, PY = -8, NX = 24, NY = -38, MOUTH = [19, 0];     // body pivot, neck pivot, mouth (head space)
+  const PLACE_X = 160, SIT_X = 90;                                    // where the cat sets the seed down, where it sits
   const D = { walk: [.8, 3.2], bow: [3.2, 3.8], drop: [3.8, 4.3], up: [4.3, 4.8], hop: [4.8, 5.6], sit: [5.6, 6.2], rain: [6.2, 9.8], bloom: 9.4 };
   const gy = x => { const u = (x + 500) / 1400; return 482 - 92 * u * (1 - u) + 3; };
   const rotv = (x, y, deg) => { const r = deg * Math.PI / 180, c = Math.cos(r), s = Math.sin(r); return [x * c - y * s, x * s + y * c]; };
-  const bodyAngle = p => -p.sit * 38 + p.bow * 8;
-  const headAngle = p => p.bow * 40 + p.sit * 30;
+  const bodyAngle = p => -p.sit * 30 + p.bow * 8;
+  const headAngle = p => p.bow * 40 + p.sit * 24;
   function catPose(ot) {
     const sc = Math.min(innerWidth / 400, innerHeight / 640), startX = Math.min(-70, 200 - innerWidth / sc / 2 - 70);
     const pw = prog(...D.walk, ot), ph = prog(...D.hop, ot), hopping = ot >= D.hop[0] && ot < D.hop[1];
@@ -475,7 +485,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     if (ot >= D.hop[0]) x = lerp(PLACE_X, SIT_X, ph);
     return {
       x, y: hopping ? -Math.abs(Math.sin(ph * Math.PI * 2)) * 9 : walking ? -Math.abs(Math.sin(ot * 14)) * 1.6 : 0,
-      amp: walking ? 30 * (1 - prog(.9, 1, pw)) : hopping ? 10 : 0, phase: ot * 14,
+      amp: walking ? 26 * (1 - prog(.9, 1, pw)) : hopping ? 9 : 0, phase: ot * 14,
       bow: easeInOut(prog(...D.bow, ot)) * (1 - easeInOut(prog(...D.up, ot))), sit: easeInOut(prog(...D.sit, ot)),
     };
   }
@@ -486,20 +496,20 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   }
   const DROP_FROM = mouthAt({ x: PLACE_X, y: 0, bow: 1, sit: 0 });
   function drawCat(p, idle) {
-    const a = bodyAngle(p), sw = Math.sin(p.phase) * p.amp, kF = 1 + p.sit * 1.35 - p.bow * .45;
+    const a = bodyAngle(p), sw = Math.sin(p.phase) * p.amp, kF = 1 + p.sit * 1.5 - p.bow * .5;
     CAT.setAttribute('transform', `translate(${p.x},${gy(p.x) + p.y})`);
     catBody.setAttribute('transform', `translate(${PX},${PY}) rotate(${a}) translate(${-PX},${-PY})`);
     catHead.setAttribute('transform', `translate(${NX},${NY}) rotate(${headAngle(p) + Math.sin(idle * 1.4) * 2 * p.sit})`);
-    const leg = (el, hx, ang, k) => el.setAttribute('transform', `translate(${hx},-14) rotate(${-a + ang}) scale(1,${k})`);
-    leg(legs.fn, 17, sw, kF); leg(legs.ff, 11, -sw, kF);
-    leg(legs.bn, -17, -sw, 1); leg(legs.bf, -11, sw, 1);
+    const leg = (el, hx, ang, k) => el.setAttribute('transform', `translate(${hx},-10) rotate(${-a + ang}) scale(1,${k})`);
+    leg(legs.fn, 15, sw, kF); leg(legs.ff, 8, -sw, kF);
+    leg(legs.bn, -15, -sw, 1); leg(legs.bf, -8, sw, 1);
     legs.bn.setAttribute('opacity', 1 - p.sit); legs.bf.setAttribute('opacity', 1 - p.sit);
     haunch.setAttribute('opacity', p.sit);
     const wag = Math.sin(idle * 2.8) * 12, sway = Math.sin(p.phase * .5) * 10;
-    catTail.setAttribute('transform', `translate(${lerp(-29, -34, p.sit)},${lerp(-24, -6, p.sit)}) rotate(${lerp(sway, -75 + wag, p.sit)})`);
-    catShadow.setAttribute('cx', lerp(0, -4, p.sit));
+    catTail.setAttribute('transform', `translate(${lerp(-26, -32, p.sit)},${lerp(-26, -8, p.sit)}) rotate(${lerp(sway, -75 + wag, p.sit)})`);
+    catShadow.setAttribute('cx', lerp(0, -5, p.sit));
     const blink = idle % 3.4 < .14 ? .12 : 1;
-    catEye.setAttribute('transform', `translate(13,-10) scale(1,${blink}) translate(-13,10)`);
+    catEye.setAttribute('transform', `translate(7,-10) scale(1,${blink}) translate(-7,10)`);
   }
   const vsc = Math.min(innerWidth / 400, innerHeight / 640), halfW = innerWidth / vsc / 2;
   const rainClouds = [[110, 70, 1.5], [215, 46, 1.7], [300, 84, 1.4]].map(([x, y, s]) => {
@@ -546,7 +556,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     let sx = 200, sy = 458 + crack * 8, sr = wobble + shake, ss = 1.7 * (1 + .06 * Math.sin(ot * 5) * rainI);
     if (ot < D.drop[1]) {
       const dt = prog(...D.drop, ot), m = ot < D.drop[0] ? mouthAt(cp) : DROP_FROM;
-      sx = lerp(m[0], 200, easeOut(dt)); sy = lerp(m[1], 458, dt * dt); sr = lerp(80, 0, dt); ss = lerp(1.05, 1.7, dt);
+      sx = lerp(m[0], 200, easeOut(dt)); sy = lerp(m[1], 458, dt * dt); sr = lerp(80, 0, dt); ss = lerp(.8, 1.7, dt);
     }
     seed.setAttribute('transform', `translate(${sx},${sy}) rotate(${sr}) scale(${ss})`);
     seedL.setAttribute('transform', `translate(${-crack * 7},0) rotate(${-crack * 32},0,14)`);
