@@ -153,7 +153,40 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     <ellipse cx="250" cy="540" rx="4" ry="2"/><ellipse cx="150" cy="560" rx="7" ry="3"/>
   </g>
 
+  <rect id="dim" x="-600" y="-600" width="1600" height="2200" fill="#2e3a55" opacity="0"/>
+
   <g id="meadow"></g>
+
+  <!-- chubby grey kitten, facing right; origin on the ground under its body, legs pivot at the hip -->
+  <g id="cat" stroke="#5f6270" stroke-width="1.2" stroke-linejoin="round">
+    <g fill="#959aa6"><g class="leg"><rect x="-4.5" y="0" width="9" height="11" rx="4.5"/></g><g class="leg"><rect x="-4.5" y="0" width="9" height="11" rx="4.5"/></g></g>
+    <g id="catUp">
+      <g id="catTail" fill="none" stroke-linecap="round">
+        <path d="M-19,-18 C-34,-18 -38,-32 -32,-42 C-29,-47 -23,-46 -24,-40" stroke-width="10"/>
+        <path d="M-19,-18 C-34,-18 -38,-32 -32,-42 C-29,-47 -23,-46 -24,-40" stroke="#a9acb8" stroke-width="7.6"/>
+      </g>
+      <ellipse cx="0" cy="-21" rx="24" ry="15" fill="#a9acb8"/>
+      <ellipse cx="12" cy="-17" rx="9" ry="9" fill="#fff" stroke="none"/>
+      <path d="M-13,-34 q2,4 0,8 M-5,-35.5 q2,4 0,8 M3,-35 q2,4 0,7" fill="none" stroke="#7f8290" stroke-width="1.8" stroke-linecap="round"/>
+      <g id="catHead">
+        <path d="M-15,-6 C-17,-16 -14,-22 -11,-21 C-8,-20 -4,-15 -3,-13Z M3,-14 C6,-19 11,-22 13,-21 C16,-19 16,-11 15,-6Z" fill="#a9acb8"/>
+        <path d="M-12.5,-9 C-13.5,-15 -12,-18 -10.5,-17.5 C-8.5,-16 -7,-14 -6,-13Z M6,-14 C8,-17 11,-18.5 12,-18 C13.5,-16 13.5,-12 13,-9Z" fill="#f7b9c6" stroke="none"/>
+        <ellipse cx="0" cy="0" rx="18" ry="15.5" fill="#a9acb8"/>
+        <path d="M-3,-14 L-2,-9.5 M1,-15 L1,-10.5 M5,-14 L4,-9.5" fill="none" stroke="#7f8290" stroke-width="1.6" stroke-linecap="round"/>
+        <ellipse cx="6" cy="5.5" rx="9" ry="6.5" fill="#fff" stroke="none"/>
+        <g fill="#f7a1b4" opacity=".75" stroke="none"><ellipse cx="-7" cy="5" rx="2.8" ry="1.7"/><ellipse cx="14.5" cy="4.5" rx="2.4" ry="1.6"/></g>
+        <g id="catEyes" stroke="none">
+          <circle cx="-3" cy="-1" r="3.7" fill="#2b2230"/><circle cx="10" cy="-1.5" r="3.4" fill="#2b2230"/>
+          <circle cx="-1.8" cy="-2.4" r="1.3" fill="#fff"/><circle cx="11.1" cy="-2.9" r="1.2" fill="#fff"/>
+          <circle cx="-4.1" cy=".4" r=".6" fill="#fff"/><circle cx="9" cy="0" r=".55" fill="#fff"/>
+        </g>
+        <path d="M5.5,3 L8.5,3 L7,4.8Z" fill="#f08da0" stroke="none"/>
+        <path d="M4,6 Q5.5,8 7,6 Q8.5,8 10,6" fill="none" stroke="#5a4b55" stroke-width=".8" stroke-linecap="round"/>
+        <path d="M15,5 L23,3.5 M15,7 L23,8" fill="none" stroke="#7f8290" stroke-width=".6"/>
+      </g>
+    </g>
+    <g fill="#a9acb8"><g class="leg"><rect x="-4.5" y="0" width="9" height="11" rx="4.5"/><ellipse cx="0" cy="9" rx="4" ry="2.2" fill="#fff" stroke="none"/></g><g class="leg"><rect x="-4.5" y="0" width="9" height="11" rx="4.5"/><ellipse cx="0" cy="9" rx="4" ry="2.2" fill="#fff" stroke="none"/></g></g>
+  </g>
 
   <!-- roots -->
   <g id="roots" fill="none" stroke="#8a5f48" stroke-width="2.2" stroke-linecap="round">
@@ -182,6 +215,13 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     <path id="seedL" d="M0,-14 A11,14 0 0 0 0,14 Z" fill="url(#gSeed)"/>
     <path id="seedR" d="M0,-14 A11,14 0 0 1 0,14 Z" fill="url(#gSeed)"/>
     <path d="M-4,-8 C-6,-3 -6,3 -4,7" fill="none" stroke="#f0d2b8" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>
+  </g>
+
+  <!-- rain cloud -->
+  <g id="rainCloud" opacity="0">
+    <g id="rain" stroke="#5f7fae" stroke-width="2" stroke-linecap="round"></g>
+    <g fill="#a9b2c3"><circle cx="-40" cy="0" r="22"/><circle cx="-10" cy="-14" r="28"/><circle cx="25" cy="-6" r="24"/><circle cx="48" cy="6" r="16"/><ellipse cx="0" cy="10" rx="62" ry="14"/></g>
+    <g fill="#c3cad6"><circle cx="-14" cy="-20" r="14"/><circle cx="20" cy="-12" r="10"/></g>
   </g>
 
   <g id="sparkles" fill="#f2c46b"></g>
@@ -214,14 +254,22 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   const easeOut = x => 1 - Math.pow(1 - x, 3);
   const easeBack = x => { const c = 1.6; return x <= 0 ? 0 : 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
   const lerp = (a, b, t) => a + (b - a) * t;
-  const dropEase = x => { const n = 7.5625, d = 2.75;   // bounce on landing
-    if (x < 1 / d) return n * x * x; if (x < 2 / d) return n * (x -= 1.5 / d) * x + .75;
-    if (x < 2.5 / d) return n * (x -= 2.25 / d) * x + .9375; return n * (x -= 2.625 / d) * x + .984375; };
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const use = (href, attrs) => { const u = document.createElementNS(NS, 'use'); u.setAttribute('href', href); for (const k in attrs) u.setAttribute(k, attrs[k]); return u; };
   const g = () => document.createElementNS(NS, 'g');
 
   // seconds after the tap
+  // intro, seconds after the tap: kitten walks in, drops the seed, steps back and lies down; a cloud rains on the seed
+  const I = { walk: [.9, 3.1], dip: [3.1, 3.5], drop: [3.4, 3.8], back: [3.9, 4.8], lie: [4.7, 5.2],
+              cloud: [4.1, 4.8, 6.8, 7.4], rain: [4.6, 5.0, 6.5, 6.9], swell: [4.8, 6.9], end: 7.3 };
+  const CAT = 1.5, catLegs = [...document.querySelectorAll('#cat .leg')];
+  // far back, far front, near back, near front
+  const LEG_X = [-12, 12, -8, 16];
+  const drops = Array.from({ length: 40 }, () => {
+    const l = document.createElementNS(NS, 'line'); $('rain').appendChild(l);
+    return { l, x: -60 + Math.random() * 120, ph: Math.random() };
+  });
+
   const T = { crack: [.5, 1.2], roots: [.8, 2.2], stem: [1.0, 4.0], bud: [3.7, 4.7], bloom: [4.7, 7.6], after: 7.2, done: 14.2 };
 
   /* stem and leaves */
@@ -407,7 +455,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
       $('intro').appendChild(sp);
       setTimeout(() => sp.remove(), 1200);
     }
-    openTimer = setTimeout(bloom, 2100);
+    openTimer = setTimeout(bloom, I.end * 1000);
   }
   function bloom() {
     if (start !== null) return;
@@ -430,13 +478,43 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     const t = start === null ? 0 : (now - start) / 1000;
     const idle = now / 1000;
 
-    // seed: waits with a little wobble, shakes on tap, then splits open and settles
+    const ot = opened ? (now - openAt) / 1000 : 0;
+
+    // kitten: waddles in, dips its head to set the seed down, steps back and curls up looking at the flower
+    const walk = easeInOut(prog(...I.walk, ot)), back = easeInOut(prog(...I.back, ot)), lie = easeInOut(prog(...I.lie, ot));
+    const cx = lerp(lerp(-150, 158, walk), 100, back), cy = groundY(cx) - 2;
+    const moving = (walk > 0 && walk < 1) || (back > 0 && back < 1);
+    const step = Math.sin(cx * .2), swing = moving ? step * 26 : 0;
+    const up = lie * 6 + (moving ? -Math.abs(step) * 1.5 : 0);
+    const headA = lerp(0, 32, easeInOut(prog(...I.dip, ot))) * (1 - easeInOut(prog(I.back[0], I.back[0] + .4, ot))) - 12 * lie;
+    $('cat').setAttribute('transform', `translate(${cx},${cy}) scale(${CAT})`);
+    $('catUp').setAttribute('transform', `translate(0,${up}) rotate(${moving ? step * 4 : 0},0,-10)`);
+    catLegs.forEach((leg, i) => leg.setAttribute('transform', `translate(${LEG_X[i]},${-11 + lie * 6}) rotate(${i === 0 || i === 3 ? swing : -swing}) scale(1,${lerp(1, .25, lie)})`));
+    $('catHead').setAttribute('transform', `translate(20,-38) rotate(${headA})`);
+    $('catTail').setAttribute('transform', `rotate(${reduce ? 0 : Math.sin(idle * 2.4) * 8},-19,-18)`);
+    $('catEyes').setAttribute('transform', `translate(0,-1) scale(1,${idle % 3.7 < .14 ? .12 : 1}) translate(0,1)`);
+    const ar = headA * Math.PI / 180;
+    const mouth = { x: cx + CAT * (20 + Math.cos(ar) * 8 - Math.sin(ar) * 9), y: cy + CAT * (up - 38 + Math.sin(ar) * 8 + Math.cos(ar) * 9) };
+
+    // rain cloud drifts in, rains on the seed, drifts off
+    const cIn = easeOut(prog(I.cloud[0], I.cloud[1], ot)), cOut = easeInOut(prog(I.cloud[2], I.cloud[3], ot));
+    const rainK = prog(I.rain[0], I.rain[1], ot) * (1 - prog(I.rain[2], I.rain[3], ot));
+    $('rainCloud').setAttribute('transform', `translate(${lerp(110, 200, cIn) + cOut * 90},300)`);
+    $('rainCloud').setAttribute('opacity', cIn * (1 - cOut));
+    $('dim').setAttribute('opacity', .16 * cIn * (1 - cOut));
+    drops.forEach(d => {
+      const y = 18 + ((ot * 1.7 + d.ph) % 1) * 137;
+      d.l.setAttribute('x1', d.x); d.l.setAttribute('y1', y); d.l.setAttribute('x2', d.x - 2); d.l.setAttribute('y2', y + 10);
+      d.l.setAttribute('opacity', reduce ? 0 : rainK * .9);
+    });
+
+    // seed: carried in the kitten's mouth, set down, swells in the rain, shakes, then splits open and settles
+    const fall = prog(...I.drop, ot);
     const crack = easeOut(prog(...T.crack, t));
     const shake = start !== null && t < T.crack[0] ? Math.sin(t * 60) * 6 * (t / T.crack[0]) : 0;
-    const wobble = start === null && !reduce ? Math.sin(idle * 2.2) * 5 : 0;
-    const ot = opened ? (now - openAt) / 1000 : 0;
-    const seedY = lerp(-160, 458, dropEase(prog(.7, 1.7, ot)));
-    seed.setAttribute('transform', `translate(200,${seedY + crack * 8}) rotate(${wobble + shake}) scale(1.7)`);
+    const drink = reduce ? 0 : Math.sin(idle * 7) * 5 * rainK;
+    const seedS = lerp(.7, 1, fall) * lerp(1, 1.7, easeInOut(prog(...I.swell, ot)));
+    seed.setAttribute('transform', `translate(${lerp(mouth.x, 200, fall)},${lerp(mouth.y, 458, fall * fall) + crack * 8}) rotate(${drink + shake}) scale(${seedS})`);
     seedL.setAttribute('transform', `translate(${-crack * 7},0) rotate(${-crack * 32},0,14)`);
     seedR.setAttribute('transform', `translate(${crack * 7},0) rotate(${crack * 32},0,14)`);
     seed.setAttribute('opacity', 1 - prog(2.4, 3.4, t) * .65);
