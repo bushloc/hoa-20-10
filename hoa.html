@@ -141,12 +141,12 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   <circle id="glow" cx="200" cy="200" r="235" fill="url(#gGlow)" opacity="0"/>
 
   <!-- distant grassy hills -->
-  <path d="M-500,470 C-360,400 -220,430 -90,420 C20,410 60,372 150,388 C230,402 260,430 330,410 C420,384 500,360 600,392 C720,430 820,400 900,410 L900,490 L-500,490Z" fill="#e3e8d6" transform="translate(0,16)"/>
-  <path d="M-500,478 C-380,440 -250,456 -120,446 C-20,438 40,420 110,430 C180,440 230,452 300,438 C380,420 450,416 540,432 C660,452 780,430 900,440 L900,492 L-500,492Z" fill="#d3dec4" transform="translate(0,16)"/>
+  <path d="M-500,470 C-360,400 -220,430 -90,420 C20,410 60,372 150,388 C230,402 260,430 330,410 C420,384 500,360 600,392 C720,430 820,400 900,410 L900,490 L-500,490Z" fill="#e3e8d6" transform="translate(0,40)"/>
+  <path d="M-500,478 C-380,440 -250,456 -120,446 C-20,438 40,420 110,430 C180,440 230,452 300,438 C380,420 450,416 540,432 C660,452 780,430 900,440 L900,492 L-500,492Z" fill="#d3dec4" transform="translate(0,40)"/>
   <g id="dandelions"></g>
 
   <!-- ground, lowered slightly for more sky -->
-  <g transform="translate(0,16)">
+  <g transform="translate(0,40)">
   <path d="M-500,482 Q200,436 900,482 L900,1400 L-500,1400Z" fill="#d8b9a5"/>
   <path d="M-500,482 Q200,436 900,482" fill="none" stroke="#b98f78" stroke-width="2"/>
   <g fill="#c9a690" opacity=".8">
@@ -223,7 +223,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   </g>
 
   <!-- Uneven, branching roots grow first; a few later turns quietly suggest JN. -->
-  <g id="roots" transform="translate(0,16)" fill="none" stroke="#8a5f48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <g id="roots" transform="translate(0,40)" fill="none" stroke="#8a5f48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path data-start="0" d="M200,470 C193,479 177,480 163,488 S146,501 134,509 S122,525 112,531"/>
     <path data-start=".12" d="M200,470 C210,479 229,479 245,486 S263,502 275,508 S284,520 290,526"/>
     <path data-start=".08" d="M200,470 C198,485 203,495 200,508 S196,529 200,541 S196,554 197,566" stroke-width="2.2"/>
@@ -257,7 +257,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   </g>
 
   <!-- stem and leaves -->
-  <path id="stem" d="M200,484 C184,418 222,340 200,262 C192,236 198,214 200,200" fill="none" stroke="url(#gStem)" stroke-width="6" stroke-linecap="round"/>
+  <path id="stem" d="M200,508 C184,442 222,352 200,262 C192,236 198,214 200,200" fill="none" stroke="url(#gStem)" stroke-width="6" stroke-linecap="round"/>
   <g id="leaves"></g>
 
   <!-- flower head -->
@@ -272,7 +272,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   </g>
 
   <!-- the hole the cat digs; the seed drops in, then a little mound covers its lower half -->
-  <ellipse transform="translate(0,16)" id="hole" cx="200" cy="461" rx="14" ry="4.5" fill="#6f5043" opacity="0"/>
+  <ellipse transform="translate(0,40)" id="hole" cx="200" cy="461" rx="14" ry="4.5" fill="#6f5043" opacity="0"/>
 
   <!-- seed -->
   <g id="seed" transform="translate(200,462)">
@@ -280,7 +280,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     <path id="seedR" d="M0,-14 A11,14 0 0 1 0,14 Z" fill="url(#gSeed)"/>
     <path d="M-4,-8 C-6,-3 -6,3 -4,7" fill="none" stroke="#f0d2b8" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>
   </g>
-  <path transform="translate(0,16)" id="mound" d="M168,466 Q184,446 200,446 Q216,446 232,466 Q216,486 200,486 Q184,486 168,466Z" fill="#c4a08a" stroke="#b98f78" stroke-width="1.2" opacity="0"/>
+  <path transform="translate(0,40)" id="mound" d="M168,466 Q184,446 200,446 Q216,446 232,466 Q216,486 200,486 Q184,486 168,466Z" fill="#c4a08a" stroke="#b98f78" stroke-width="1.2" opacity="0"/>
 
   <!-- rain cloud -->
   <g id="rainCloud" opacity="0">
@@ -416,7 +416,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   });
 
   /* meadow: pale grass and wildflowers that spring up beside the rose */
-  const groundY = x => { const u = (x + 500) / 1400; return 498 - 92 * u * (1 - u) + 2; };
+  const groundY = x => { const u = (x + 500) / 1400; return 522 - 92 * u * (1 - u) + 2; };
   const MEADOW = [
     { x: 22, k: 'f', c: '#d6e4f6', s: .9 }, { x: 50, k: 'g', s: 1 }, { x: 80, k: 'f', c: '#ffffff', s: 1.1 },
     { x: 108, k: 'g', s: .8 }, { x: 134, k: 'f', c: '#fff1c4', s: .8 }, { x: 266, k: 'f', c: '#d6e4f6', s: .85 },
@@ -577,7 +577,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   const ptIn = (el, x, y) => new DOMPoint(x, y).matrixTransform(svgEl.getScreenCTM().inverse().multiply(el.getScreenCTM()));
   ['#f4a6a6', '#f7c59f', '#f9e79f', '#b8e0b0', '#a7d3e8', '#b3b7e6', '#d4b3e6'].forEach((c, i) => {
     const r = 190 - i * 6;
-    $('rainbow').appendChild(mk('path', { d: `M${200 - r},486 A${r},${r} 0 0 1 ${200 + r},486`, stroke: c }));
+    $('rainbow').appendChild(mk('path', { d: `M${200 - r},510 A${r},${r} 0 0 1 ${200 + r},510`, stroke: c }));
   });
   // every 6 s a petal drops from the flower and settles on the ground beside the cat, then fades
   const catPetal = use('#petal', { fill: 'url(#gMid)', opacity: 0 }); $('falling').appendChild(catPetal);
@@ -595,6 +595,9 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     // They settle together, still awake and looking up at the flower.
     const watch = easeInOut(prog(23.2, 25, t));
     const headPerch = easeInOut(prog(23.6, 25.2, t));
+    // A little cross-eyed look, then back to the flower, every six seconds.
+    const sillyPhase = t < 27.2 ? -1 : (t - 27.2) % 6;
+    const silly = reduce || sillyPhase < 0 ? 0 : easeInOut(prog(0, .55, sillyPhase)) * (1 - easeInOut(prog(1.6, 2.25, sillyPhase)));
     const walk = easeInOut(prog(...I.walk, ot)), back = easeInOut(prog(...I.back, ot)), lie = easeInOut(prog(...I.lie, ot));
     const cx = lerp(lerp(-150, 170, walk), 100, back), cy = groundY(cx) - 2;
     const digging = ot > I.dig[0] && ot < I.dig[1], covering = ot > I.cover[0] && ot < I.cover[1];
@@ -631,8 +634,8 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     $('catWipe').setAttribute('opacity', wipe);
     $('catWipe').setAttribute('transform', `rotate(${reduce ? 0 : Math.sin(ot * 18) * 12 * wipe},-8,16)`);
     $('catSparkle').setAttribute('opacity', prog(6.4, 6.7, t) * (1 - prog(7.5, 7.9, t)));
-    $('catBlush').setAttribute('opacity', .75 + .25 * land);
-    $('catBlush').setAttribute('fill', land > .5 ? '#f27f9c' : '#f7a1b4');
+    $('catBlush').setAttribute('opacity', .75 + .25 * Math.max(land, silly));
+    $('catBlush').setAttribute('fill', Math.max(land, silly) > .5 ? '#f27f9c' : '#f7a1b4');
     $('cat').setAttribute('transform', `translate(${cx},${cy}) scale(${CAT})`);
     $('catBody').setAttribute('transform', `rotate(${reduce || !digging ? 0 : Math.sin(ot * 14) * 4},13,-20)`);
     $('catUp').setAttribute('transform', `translate(0,${up}) rotate(${(moving ? step * 4 : 0) - 16 * sit + 8 * lean},${sit || lean ? -20 : 0},${sit || lean ? -8 : -10})`);
@@ -646,7 +649,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
       leg.setAttribute('opacity', i === 3 ? 1 - wipe : 1);
       leg.setAttribute('transform', `translate(${LEG_X[i]},${y}) rotate(${rot - (i === 3 ? reach * 72 : 0)}) scale(1,${k * (1 + (i === 3 ? reach * .35 : 0))})`);
     });
-    $('catHead').setAttribute('transform', `translate(18,-36) rotate(${lerp(headA, -30, watch) + purr * watch}) scale(1.2,1.17)`);
+    $('catHead').setAttribute('transform', `translate(18,-36) rotate(${lerp(headA, -30, watch) + purr * watch + 4 * silly}) scale(1.2,1.17)`);
     const wag = reduce ? 0 : pk >= 0 && pk < 1 ? Math.sin(idle * 12) * 16 : digging ? Math.sin(ot * 8) * 13 : happy ? Math.sin(idle * 2.8) * 10 : Math.sin(idle * 2.4) * 8;
     const calmWag = reduce ? 0 : Math.sin(t * .9) * 4;
     $('catTail').setAttribute('transform', `rotate(${lerp(wag, calmWag, watch)},-19,-18)`);
@@ -656,8 +659,8 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     const squint = sneeze > .2;
     $('catEyes').setAttribute('transform', `translate(0,-1) scale(1,${1 - .96 * blink}) translate(0,1)`);
     $('catEyes').setAttribute('opacity', smiling || squint ? 0 : 1);
-    $('catEyeL').setAttribute('transform', `translate(${1.5 * land + 1.1 * puzzled + .7 * watch},${1.1 * land - .8 * puzzled - 1.2 * earLand - 1.1 * watch})`);
-    $('catEyeR').setAttribute('transform', `translate(${-1.8 * land + .8 * puzzled + .7 * watch},${1.4 * land - .8 * puzzled - 1.2 * earLand - 1.1 * watch})`);
+    $('catEyeL').setAttribute('transform', `translate(${lerp(1.5 * land + 1.1 * puzzled + .7 * watch, 1.5, silly)},${lerp(1.1 * land - .8 * puzzled - 1.2 * earLand - 1.1 * watch, 1.1, silly)})`);
+    $('catEyeR').setAttribute('transform', `translate(${lerp(-1.8 * land + .8 * puzzled + .7 * watch, -1.8, silly)},${lerp(1.4 * land - .8 * puzzled - 1.2 * earLand - 1.1 * watch, 1.4, silly)})`);
     $('catBlink').setAttribute('opacity', !smiling && !squint ? blink : 0);
     $('catHappy').setAttribute('opacity', smiling && !squint ? 1 : 0);
     $('catSneeze').setAttribute('opacity', squint ? 1 : 0);
@@ -677,8 +680,8 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
       if (!(digging || covering) || reduce) { d.c.setAttribute('opacity', 0); return; }
       // digging flings clods back under the cat; covering pushes them forward onto the mound
       const u = (ot * 2.2 + d.ph) % 1;
-      if (digging) { d.c.setAttribute('cx', 196 - u * d.dx); d.c.setAttribute('cy', 474 - Math.sin(u * Math.PI) * d.h); }
-      else { d.c.setAttribute('cx', lerp(176, 198 + (d.ph - .5) * 16, u)); d.c.setAttribute('cy', 476 - Math.sin(u * Math.PI) * 10); }
+      if (digging) { d.c.setAttribute('cx', 196 - u * d.dx); d.c.setAttribute('cy', 498 - Math.sin(u * Math.PI) * d.h); }
+      else { d.c.setAttribute('cx', lerp(176, 198 + (d.ph - .5) * 16, u)); d.c.setAttribute('cy', 500 - Math.sin(u * Math.PI) * 10); }
       d.c.setAttribute('opacity', (1 - u) * .9);
     });
 
@@ -690,7 +693,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     $('dim').setAttribute('opacity', .16 * cIn * (1 - cOut));
     $('rainbow').setAttribute('opacity', .55 * easeInOut(prog(I.cloud[2], I.cloud[2] + .8, ot)) * (1 - easeInOut(prog(3, 4, t))));
     drops.forEach(d => {
-      const y = 18 + ((ot * 1.7 + d.ph) % 1) * 153;
+      const y = 18 + ((ot * 1.7 + d.ph) % 1) * 177;
       d.l.setAttribute('x1', d.x); d.l.setAttribute('y1', y); d.l.setAttribute('x2', d.x - 2); d.l.setAttribute('y2', y + 10);
       d.l.setAttribute('opacity', reduce ? 0 : rainK * .9);
     });
@@ -701,7 +704,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     const shake = start !== null && t < T.crack[0] ? Math.sin(t * 60) * 6 * (t / T.crack[0]) : 0;
     const drink = reduce ? 0 : Math.sin(idle * 7) * 5 * rainK;
     const seedS = lerp(.7, 1, fall) * lerp(1, 1.7, easeInOut(prog(...I.swell, ot)));
-    seed.setAttribute('transform', `translate(${lerp(mouth.x, 200, fall)},${lerp(mouth.y, 474, fall * fall) + crack * 8}) rotate(${drink + shake}) scale(${seedS})`);
+    seed.setAttribute('transform', `translate(${lerp(mouth.x, 200, fall)},${lerp(mouth.y, 498, fall * fall) + crack * 8}) rotate(${drink + shake}) scale(${seedS})`);
     seedL.setAttribute('transform', `translate(${-crack * 7},0) rotate(${-crack * 32},0,14)`);
     seedR.setAttribute('transform', `translate(${crack * 7},0) rotate(${crack * 32},0,14)`);
     seed.setAttribute('opacity', 1 - prog(2.4, 3.4, t));
