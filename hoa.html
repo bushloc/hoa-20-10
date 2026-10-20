@@ -602,7 +602,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     seed.setAttribute('transform', `translate(${lerp(mouth.x, 200, fall)},${lerp(mouth.y, 458, fall * fall) + crack * 8}) rotate(${drink + shake}) scale(${seedS})`);
     seedL.setAttribute('transform', `translate(${-crack * 7},0) rotate(${-crack * 32},0,14)`);
     seedR.setAttribute('transform', `translate(${crack * 7},0) rotate(${crack * 32},0,14)`);
-    seed.setAttribute('opacity', 1 - prog(2.4, 3.4, t) * .65);
+    seed.setAttribute('opacity', 1 - prog(2.4, 3.4, t));
 
     roots.forEach(({ p, L }, i) => { p.style.strokeDashoffset = L * (1 - easeOut(prog(T.roots[0] + i * .15, T.roots[1], t))); });
 
