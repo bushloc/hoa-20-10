@@ -160,37 +160,62 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   <g id="dirt" fill="#9a6b52"></g>
   <!-- chubby grey kitten, facing right; origin on the ground under its body, legs pivot at the hip -->
   <g id="cat" stroke="#5f6270" stroke-width="1.2" stroke-linejoin="round">
-    <g fill="#959aa6"><g class="leg"><rect x="-4.5" y="0" width="9" height="11" rx="4.5"/></g><g class="leg"><rect x="-4.5" y="0" width="9" height="11" rx="4.5"/></g></g>
+    <g fill="#959aa6"><g class="leg"><rect x="-4.5" y="0" width="9" height="9" rx="4.5"/></g><g class="leg"><rect x="-4.5" y="0" width="9" height="9" rx="4.5"/></g></g>
     <g id="catUp">
       <g id="catTail" fill="none" stroke-linecap="round">
         <path d="M-19,-18 C-34,-18 -38,-32 -32,-42 C-29,-47 -23,-46 -24,-40" stroke-width="11.5"/>
         <path d="M-19,-18 C-34,-18 -38,-32 -32,-42 C-29,-47 -23,-46 -24,-40" stroke="#a9acb8" stroke-width="9"/>
         <path d="M-31,-43.5 C-28.5,-47 -23,-46 -24,-40" stroke="#fff" stroke-width="9"/>
       </g>
-      <ellipse cx="0" cy="-21" rx="24" ry="15" fill="#a9acb8"/>
+      <g id="catBody">
+      <ellipse cx="-1" cy="-20" rx="21" ry="17.5" fill="#a9acb8"/>
       <ellipse cx="12" cy="-17" rx="9" ry="9" fill="#fff" stroke="none"/>
       <path d="M-13,-34 q2,4 0,8 M-5,-35.5 q2,4 0,8 M3,-35 q2,4 0,7" fill="none" stroke="#7f8290" stroke-width="1.8" stroke-linecap="round"/>
+      </g>
       <g id="catHead">
-        <path d="M-16,-5 C-18,-14 -16,-21 -12,-21 C-8,-21 -4,-16 -2,-13Z M2,-14 C5,-19 10,-22 13,-21 C17,-20 17,-12 16,-5Z" fill="#a9acb8"/>
-        <path d="M-12.5,-9 C-13.5,-15 -12,-18 -10.5,-17.5 C-8.5,-16 -7,-14 -6,-13Z M6,-14 C8,-17 11,-18.5 12,-18 C13.5,-16 13.5,-12 13,-9Z" fill="#f7b9c6" stroke="none"/>
-        <ellipse cx="0" cy="0" rx="18" ry="15.5" fill="#a9acb8"/>
+        <g id="catEars">
+        <path d="M-17,-6 C-18,-13 -17,-20 -13,-20 C-10,-20 -6,-15 -5,-12Z M5,-12 C8,-16 12,-20 15,-19 C18,-17 18,-10 17,-5Z" fill="#a9acb8"/>
+        <path d="M-14,-10 Q-15,-17 -13,-17 Q-10,-16 -8,-12Z M9,-12 Q14,-18 15,-16 L15,-9Z" fill="#f7b9c6" stroke="none"/>
+        </g>
+        <ellipse cx="0" cy="0" rx="19.5" ry="16.5" fill="#a9acb8"/>
         <path d="M-3,-14 L-2,-9.5 M1,-15 L1,-10.5 M5,-14 L4,-9.5" fill="none" stroke="#7f8290" stroke-width="1.6" stroke-linecap="round"/>
         <ellipse cx="6" cy="5.5" rx="9" ry="6.5" fill="#fff" stroke="none"/>
         <circle id="catNose" cx="7" cy="1" r="0"/>
-        <g id="catBlush" fill="#f7a1b4" opacity=".75" stroke="none"><ellipse cx="-7" cy="5" rx="2.8" ry="1.7"/><ellipse cx="14.5" cy="4.5" rx="2.4" ry="1.6"/></g>
+        <g id="catBlush" fill="#f7a1b4" opacity=".75" stroke="none"><ellipse cx="-9" cy="5" rx="3.8" ry="2.2"/><ellipse cx="15" cy="4.5" rx="3.1" ry="2"/></g>
+        <g id="catMud" fill="#947052" stroke="none" opacity="0">
+          <ellipse cx="-12" cy="6" rx="3.5" ry="1.8" transform="rotate(-20,-12,6)"/>
+          <circle cx="-15" cy="3" r="1.1"/><circle cx="-9" cy="8" r=".8"/>
+        </g>
         <g id="catEyes" stroke="none">
-          <circle cx="-3.5" cy="-1" r="4.4" fill="#2b2230"/><circle cx="10.5" cy="-1.5" r="4" fill="#2b2230"/>
-          <circle cx="-2" cy="-2.7" r="1.6" fill="#fff"/><circle cx="11.9" cy="-3.1" r="1.45" fill="#fff"/>
-          <circle cx="-4.9" cy=".9" r=".8" fill="#fff"/><circle cx="9.2" cy=".4" r=".7" fill="#fff"/>
+          <ellipse cx="-3.5" cy="-1" rx="5.5" ry="5.8" fill="#fff9f1"/>
+          <ellipse cx="10.5" cy="-1.5" rx="5.1" ry="5.5" fill="#fff9f1"/>
+          <g id="catEyeL">
+            <circle cx="-3.5" cy="-1" r="4.4" fill="#2b2230"/>
+            <circle cx="-2" cy="-2.7" r="1.7" fill="#fff"/><circle cx="-4.9" cy=".9" r=".8" fill="#fff"/>
+          </g>
+          <g id="catEyeR">
+            <circle cx="10.5" cy="-1.5" r="4.1" fill="#2b2230"/>
+            <circle cx="11.9" cy="-3.1" r="1.5" fill="#fff"/><circle cx="9.2" cy=".4" r=".7" fill="#fff"/>
+          </g>
+        </g>
+        <path id="catBlink" d="M-8,-1 Q-3.5,1 1,-1 M6,-1.5 Q10.5,.5 15,-1.5" fill="none" stroke="#2b2230" stroke-width="1.5" stroke-linecap="round" opacity="0"/>
+        <path id="catSneeze" d="M-7,-4 L-2,-1 L-7,1 M14,-4 L9,-1 L14,1" fill="none" stroke="#2b2230" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0"/>
+        <g id="catSparkle" fill="#fffdf0" stroke="none" opacity="0">
+          <path d="M-10,-10 l1,2.8 2.8,1 -2.8,1 -1,2.8 -1,-2.8 -2.8,-1 2.8,-1Z"/>
+          <path d="M16,-10 l.7,2 2,.7 -2,.7 -.7,2 -.7,-2 -2,-.7 2,-.7Z"/>
         </g>
         <!-- happy squint "^ ^", shown when the flower opens -->
         <path id="catHappy" d="M-7.5,0 Q-3.5,-5 .5,0 M6.8,-.5 Q10.5,-5.5 14.2,-.5" fill="none" stroke="#2b2230" stroke-width="1.6" stroke-linecap="round" opacity="0"/>
         <path d="M5.5,3 L8.5,3 L7,4.8Z" fill="#f08da0" stroke="none"/>
-        <path d="M4,6 Q5.5,8 7,6 Q8.5,8 10,6" fill="none" stroke="#5a4b55" stroke-width=".8" stroke-linecap="round"/>
+        <path id="catMouth" d="M4,6 Q5.5,8 7,6 Q8.5,8 10,6" fill="none" stroke="#5a4b55" stroke-width=".8" stroke-linecap="round"/>
         <path d="M15,5 L23,3.5 M15,7 L23,8" fill="none" stroke="#7f8290" stroke-width=".6"/>
+        <g id="catWipe" opacity="0">
+          <path d="M-8,18 Q-20,17 -18,8 Q-18,3 -14,3 Q-10,3 -10,7 L-7,14Z" fill="#a9acb8"/>
+          <ellipse cx="-14" cy="6" rx="3.8" ry="3.2" fill="#fff" stroke="none"/>
+        </g>
       </g>
     </g>
-    <g fill="#a9acb8"><g class="leg"><rect x="-4.5" y="0" width="9" height="11" rx="4.5"/><ellipse cx="0" cy="9" rx="4" ry="2.2" fill="#fff" stroke="none"/><ellipse cx="0" cy="9.6" rx="1.9" ry="1.1" fill="#f7a1b4" stroke="none"/></g><g class="leg"><rect x="-4.5" y="0" width="9" height="11" rx="4.5"/><ellipse cx="0" cy="9" rx="4" ry="2.2" fill="#fff" stroke="none"/><ellipse cx="0" cy="9.6" rx="1.9" ry="1.1" fill="#f7a1b4" stroke="none"/></g></g>
+    <g fill="#a9acb8"><g class="leg"><rect x="-4.5" y="0" width="9" height="9" rx="4.5"/><ellipse cx="0" cy="7" rx="4.3" ry="2.2" fill="#fff" stroke="none"/><ellipse cx="0" cy="7.6" rx="1.9" ry="1.1" fill="#f7a1b4" stroke="none"/></g><g class="leg"><rect x="-4.5" y="0" width="9" height="9" rx="4.5"/><ellipse cx="0" cy="7" rx="4.3" ry="2.2" fill="#fff" stroke="none"/><ellipse cx="0" cy="7.6" rx="1.9" ry="1.1" fill="#f7a1b4" stroke="none"/></g></g>
   </g>
 
   <!-- Uneven, branching roots grow first; a few later turns quietly suggest JN. -->
@@ -566,39 +591,66 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     const lean = Math.max(easeInOut(prog(I.dig[0], I.dig[0] + .25, ot)) * (1 - easeInOut(prog(I.dip[1], I.dip[1] + .25, ot))),
                           easeInOut(prog(I.cover[0], I.cover[0] + .15, ot)) * (1 - easeInOut(prog(I.cover[1] - .15, I.cover[1], ot))));
     // front paws: fast alternating scratches while digging, slower sweeps while covering
-    const scratch = digging ? -15 + Math.sin(ot * 28) * 30 : covering ? -10 + Math.sin(ot * 11) * 40 : 0;
+    const patTime = prog(7.35, 7.95, ot);
+    const pat = reduce || patTime <= 0 || patTime >= 1 ? 0 : Math.sin(patTime * Math.PI * 4);
+    const scratch = digging ? -15 + Math.sin(ot * 28) * 30 : covering ? ot < 7.35 ? -10 + Math.sin(ot * 11) * 40 : -8 + pat * 12 : 0;
+    const nod = reduce ? 0 : Math.sin(prog(7.95, 8.35, ot) * Math.PI) * 9;
+    const wipe = reduce ? 0 : easeInOut(prog(9.4, 9.6, ot)) * (1 - easeInOut(prog(10.05, 10.3, ot)));
+    const wet = easeInOut(prog(9.15, 9.45, ot)) * (1 - easeInOut(prog(10.7, 11.1, ot)));
+    const earFlick = reduce ? 0 : Math.sin(prog(9.2, 9.8, ot) * Math.PI * 4) * wet * 9;
+    const reach = reduce ? 0 : easeInOut(prog(6.65, 7.1, t)) * (1 - easeInOut(prog(7.25, 7.7, t)));
     const moving = (walk > 0 && walk < 1) || (back > 0 && back < 1);
     const step = Math.sin(cx * .2), swing = moving ? step * 26 : 0;
     // once the plant grows it sits up (front rises about the rump) and follows the stem up to the flower
     const sit = easeInOut(prog(1.0, 2.0, t)), look = easeInOut(prog(1.5, 4.5, t));
     const happy = t > 7.4;
-    const tilt = reduce ? 0 : Math.sin(idle * 1.1) * 6 * prog(T.after, T.after + 1, t);
-    const up = lie * 6 - sit * 2 + (moving ? -Math.abs(step) * 1.5 : 0);
+    const tilt = reduce ? 0 : (5 + Math.sin(t * 1.1) * 4) * prog(T.after, T.after + 1, t);
+    const up = lie * 6 - sit * 2 + wet * 1.5 + (moving ? -Math.abs(step) * 1.5 : 0);
     // the pink butterfly lands on its nose after the writing; the cat ducks a little and blushes
-    const land = easeInOut(prog(14.4, 15.2, t)) * (1 - easeInOut(prog(17.2, 18.0, t)));
+    const land = easeInOut(prog(14.4, 15.2, t)) * (1 - easeInOut(prog(16.85, 17.3, t)));
+    const sniff = reduce ? 0 : Math.sin(t * 22) * 2 * prog(16, 16.6, t) * (1 - prog(16.8, 16.9, t));
+    const sneezeTime = t - 16.85;
+    const sneeze = reduce || sneezeTime < 0 || sneezeTime > .65 ? 0 : sneezeTime < .18 ? Math.sin(Math.PI * sneezeTime / .36) : Math.cos((sneezeTime - .18) / .47 * Math.PI / 2);
     const pk = (now - purrAt) / 1000, purr = pk >= 0 && pk < 1 && !reduce ? Math.sin(pk * Math.PI * 4) * 10 * (1 - pk) : 0;
     const pu = t > T.after + 1 && !reduce ? ((t - T.after - 1) % 6) / 6 : -1;
     const glance = pu < 0 ? 0 : easeInOut(prog(.4, .5, pu)) * (1 - easeInOut(prog(.75, .85, pu)));
-    const headA = lerp(0, 32, easeInOut(prog(...I.dip, ot))) * (1 - easeInOut(prog(I.back[0], I.back[0] + .4, ot))) - 12 * lie - 22 * look + tilt + 6 * land + purr + 14 * glance;
+    const puzzled = easeInOut(prog(17.45, 17.7, t)) * (1 - easeInOut(prog(19, 19.5, t)));
+    const headA = lerp(0, 32, easeInOut(prog(...I.dip, ot))) * (1 - easeInOut(prog(I.back[0], I.back[0] + .4, ot))) - 12 * lie - 22 * look + tilt + 6 * land + sniff + 22 * sneeze + purr + 14 * glance + nod + 7 * wet + 11 * puzzled;
+    $('catEars').setAttribute('transform', `rotate(${earFlick},0,-10)`);
+    $('catMud').setAttribute('opacity', .85 * prog(5.1, 5.8, ot) * (1 - prog(9.65, 10.15, ot)));
+    $('catWipe').setAttribute('opacity', wipe);
+    $('catWipe').setAttribute('transform', `rotate(${reduce ? 0 : Math.sin(ot * 18) * 12 * wipe},-8,16)`);
+    $('catSparkle').setAttribute('opacity', prog(6.4, 6.7, t) * (1 - prog(7.5, 7.9, t)));
     $('catBlush').setAttribute('opacity', .75 + .25 * land);
     $('catBlush').setAttribute('fill', land > .5 ? '#f27f9c' : '#f7a1b4');
     $('cat').setAttribute('transform', `translate(${cx},${cy}) scale(${CAT})`);
+    $('catBody').setAttribute('transform', `rotate(${reduce || !digging ? 0 : Math.sin(ot * 14) * 4},13,-20)`);
     $('catUp').setAttribute('transform', `translate(0,${up}) rotate(${(moving ? step * 4 : 0) - 16 * sit + 8 * lean},${sit || lean ? -20 : 0},${sit || lean ? -8 : -10})`);
     catLegs.forEach((leg, i) => {
       const front = i === 1 || i === 3;
       // sitting: front legs stretch down from the raised chest; back legs drop from the rump to stand on the ground
       // leaning in to dig, the chest drops, so the front legs shorten and paddle
       const k = lerp(lerp(1, .25, lie), front ? 1.45 : .64, sit) * (front ? lerp(1, .64, lean) : 1);
-      const y = lerp(-11 + lie * 6, front ? -16 : -7, sit) + (front ? 4 * lean : 0);
+      const y = lerp(-9 + lie * 5, front ? -14 : -6, sit) + (front ? 4 * lean : 0);
       const rot = front && lean > 0 ? lerp(swing, i === 1 ? scratch : -scratch, lean) : i === 0 || i === 3 ? swing : -swing;
-      leg.setAttribute('transform', `translate(${LEG_X[i]},${y}) rotate(${rot}) scale(1,${k})`);
+      leg.setAttribute('opacity', i === 3 ? 1 - wipe : 1);
+      leg.setAttribute('transform', `translate(${LEG_X[i]},${y}) rotate(${rot - (i === 3 ? reach * 72 : 0)}) scale(1,${k * (1 + (i === 3 ? reach * .35 : 0))})`);
     });
-    $('catHead').setAttribute('transform', `translate(20,-38) rotate(${headA}) scale(1.12)`);
-    const wag = reduce ? 0 : pk >= 0 && pk < 1 ? Math.sin(idle * 12) * 16 : happy ? Math.sin(idle * 7) * 14 : Math.sin(idle * 2.4) * 8;
+    $('catHead').setAttribute('transform', `translate(18,-36) rotate(${headA}) scale(1.2,1.17)`);
+    const wag = reduce ? 0 : pk >= 0 && pk < 1 ? Math.sin(idle * 12) * 16 : digging ? Math.sin(ot * 8) * 13 : happy ? Math.sin(idle * 2.8) * 10 : Math.sin(idle * 2.4) * 8;
     $('catTail').setAttribute('transform', `rotate(${wag},-19,-18)`);
-    $('catEyes').setAttribute('transform', `translate(0,-1) scale(1,${idle % 3.7 < .14 ? .12 : 1}) translate(0,1)`);
-    $('catEyes').setAttribute('opacity', happy ? 0 : 1);
-    $('catHappy').setAttribute('opacity', happy ? 1 : 0);
+    const blinkPhase = ot % 4.6;
+    const blink = reduce || blinkPhase > .38 ? 0 : Math.sin(Math.PI * blinkPhase / .38) ** 2;
+    const curious = land > .15 || puzzled > .1, smiling = happy && !curious;
+    const squint = sneeze > .2;
+    $('catEyes').setAttribute('transform', `translate(0,-1) scale(1,${1 - .96 * blink}) translate(0,1)`);
+    $('catEyes').setAttribute('opacity', smiling || squint ? 0 : 1);
+    $('catEyeL').setAttribute('transform', `translate(${1.5 * land + 1.1 * puzzled},${1.1 * land - .8 * puzzled})`);
+    $('catEyeR').setAttribute('transform', `translate(${-1.8 * land + .8 * puzzled},${1.4 * land - .8 * puzzled})`);
+    $('catBlink').setAttribute('opacity', !smiling && !squint ? blink : 0);
+    $('catHappy').setAttribute('opacity', smiling && !squint ? 1 : 0);
+    $('catSneeze').setAttribute('opacity', squint ? 1 : 0);
+    $('catMouth').setAttribute('d', squint ? 'M5,6 Q7,4 9,6 Q10,10 7,10 Q4,10 5,6Z' : 'M4,6 Q5.5,8 7,6 Q8.5,8 10,6');
     const mouth = ptIn($('catHead'), 8, 9);
 
     // the hole opens as it digs and is covered by a mound once the seed is in
@@ -740,10 +792,13 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
       }
     });
     const meow = $('meow');
-    if (pk >= 0 && pk < 1.4) {
+    const sneezing = sneezeTime >= 0 && sneezeTime < .9;
+    meow.textContent = sneezing ? 'Hắt xì~' : 'meo~';
+    const voiceTime = sneezing ? sneezeTime : pk;
+    if (sneezing || (pk >= 0 && pk < 1.4)) {
       const n = ptIn($('catNose'), 0, -28);
-      meow.setAttribute('x', n.x + 8); meow.setAttribute('y', n.y - 14 - pk * 10);
-      meow.setAttribute('opacity', easeOut(prog(0, .15, pk)) * (1 - prog(.9, 1.4, pk)));
+      meow.setAttribute('x', n.x + 8); meow.setAttribute('y', n.y - 14 - voiceTime * 10);
+      meow.setAttribute('opacity', easeOut(prog(0, .1, voiceTime)) * (1 - prog(sneezing ? .45 : .9, sneezing ? .9 : 1.4, voiceTime)));
     } else meow.setAttribute('opacity', 0);
     trail.forEach(s => {
       if (s.life <= 0) return;
