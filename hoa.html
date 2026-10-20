@@ -199,10 +199,11 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
   </g>
 
   <!-- roots -->
-  <g id="roots" fill="none" stroke="#8a5f48" stroke-width="2.2" stroke-linecap="round">
-    <path d="M200,468 C198,490 186,505 176,530"/>
-    <path d="M200,468 C204,492 216,508 228,524"/>
-    <path d="M200,468 C200,495 202,520 198,548"/>
+  <!-- roots, growing down from the base, spell "JN" -->
+  <g id="roots" fill="none" stroke="#8a5f48" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M200,470 C196,480 188,486 186,494 C186,510 187,524 186,536 C185,549 170,551 166,539"/>
+    <path d="M200,470 C206,480 214,484 214,494 C214,510 215,526 214,540"/>
+    <path d="M214,494 C222,508 232,526 240,540 C240,524 241,508 240,494"/>
   </g>
 
   <!-- stem and leaves -->
@@ -277,9 +278,9 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
 
   // seconds after the tap
   // intro, seconds after the tap: kitten walks in, drops the seed, steps back and lies down; a cloud rains on the seed
-  // dig: scratches a hole with its front paws; cover: two sweeps push the dirt back over the seed
-  const I = { walk: [.9, 4.4], dig: [4.5, 6.1], dip: [6.1, 6.5], drop: [6.4, 6.8], cover: [6.8, 7.4], back: [7.5, 8.4], lie: [8.3, 8.8],
-              cloud: [7.7, 8.4, 10.4, 11.0], rain: [8.2, 8.6, 10.1, 10.5], swell: [8.4, 10.5], end: 10.9 };
+  // dig: scratches a hole with its front paws; cover: the paws sweep the dirt back over the seed
+  const I = { walk: [.9, 4.4], dig: [4.5, 6.1], dip: [6.1, 6.5], drop: [6.4, 6.8], cover: [6.8, 8.0], back: [8.1, 9.0], lie: [8.9, 9.4],
+              cloud: [8.3, 9.0, 11.0, 11.6], rain: [8.8, 9.2, 10.7, 11.1], swell: [9.0, 11.1], end: 11.5 };
   const dirt = Array.from({ length: 14 }, () => {
     const c = document.createElementNS(NS, 'circle'); c.setAttribute('r', 1.8 + Math.random() * 1.8); $('dirt').appendChild(c);
     return { c, ph: Math.random(), dx: 50 + Math.random() * 40, h: 25 + Math.random() * 25 };
@@ -532,7 +533,7 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     const lean = Math.max(easeInOut(prog(I.dig[0], I.dig[0] + .25, ot)) * (1 - easeInOut(prog(I.dip[1], I.dip[1] + .25, ot))),
                           easeInOut(prog(I.cover[0], I.cover[0] + .15, ot)) * (1 - easeInOut(prog(I.cover[1] - .15, I.cover[1], ot))));
     // front paws: fast alternating scratches while digging, slower sweeps while covering
-    const scratch = digging ? -15 + Math.sin(ot * 28) * 30 : covering ? Math.sin(ot * 14) * 30 : 0;
+    const scratch = digging ? -15 + Math.sin(ot * 28) * 30 : covering ? -10 + Math.sin(ot * 11) * 40 : 0;
     const moving = (walk > 0 && walk < 1) || (back > 0 && back < 1);
     const step = Math.sin(cx * .2), swing = moving ? step * 26 : 0;
     // once the plant grows it sits up (front rises about the rump) and follows the stem up to the flower
@@ -572,11 +573,16 @@ body.open #stage svg, body.open #bg { opacity: 1; transform: none; }
     $('hole').setAttribute('opacity', holeK * (1 - mound) * .9);
     $('hole').setAttribute('rx', 14 * holeK);
     $('mound').setAttribute('opacity', mound);
+    // clods fly back under the cat while digging, but land in front of it, on the hole, while covering
+    const dirtG = $('dirt');
+    if (covering && dirtG.previousElementSibling !== $('mound')) $('mound').after(dirtG);
+    if (!covering && dirtG.nextElementSibling !== $('cat')) $('cat').before(dirtG);
     dirt.forEach(d => {
       if (!(digging || covering) || reduce) { d.c.setAttribute('opacity', 0); return; }
       // digging flings clods back under the cat; covering pushes them forward onto the mound
-      const u = (ot * 2.2 + d.ph) % 1, dir = digging ? -1 : .35;
-      d.c.setAttribute('cx', 196 + dir * u * d.dx); d.c.setAttribute('cy', 458 - Math.sin(u * Math.PI) * d.h * (digging ? 1 : .4));
+      const u = (ot * 2.2 + d.ph) % 1;
+      if (digging) { d.c.setAttribute('cx', 196 - u * d.dx); d.c.setAttribute('cy', 458 - Math.sin(u * Math.PI) * d.h); }
+      else { d.c.setAttribute('cx', lerp(176, 198 + (d.ph - .5) * 16, u)); d.c.setAttribute('cy', 460 - Math.sin(u * Math.PI) * 10); }
       d.c.setAttribute('opacity', (1 - u) * .9);
     });
 
