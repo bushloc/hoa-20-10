@@ -22,7 +22,10 @@
 html, body { height: 100%; }
 body {
   margin: 0; overflow: hidden;
-  background: radial-gradient(120% 80% at 50% 35%, var(--paper-hi), var(--paper));
+  /* paper grain over the soft gradient */
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .25 0 0 0 0 .28 .35 0 0 0 -.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    radial-gradient(120% 80% at 50% 35%, var(--paper-hi), var(--paper));
   color: var(--ink); font-family: var(--body);
   -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
 }
@@ -63,8 +66,43 @@ button:focus-visible { outline: 3px solid var(--leaf); outline-offset: 2px; }
 
 @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { #hint, #replay { animation: none; } }
+/* background: petals drifting across the sheet, faint hand-drawn doodles in the top corners */
+#bg { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+.bp {
+  position: absolute; top: 0; width: 11px; height: 15px; opacity: .5;
+  background: linear-gradient(135deg, #f9c0cf, #e5698b); border-radius: 100% 0 100% 0;
+  animation: drift var(--d) linear var(--delay) infinite;
+}
+@keyframes drift {
+  from { transform: translate(0, -30px) rotate(0deg); }
+  to { transform: translate(var(--dx), 105vh) rotate(var(--r)); }
+}
+.doodle { position: absolute; top: 10px; width: 104px; height: 104px; opacity: .32; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.doodle.tl { left: 10px; }
+.doodle.tr { right: 10px; transform: scaleX(-1); }
+
+@media (prefers-reduced-motion: reduce) { #hint, #replay { animation: none; } .bp { display: none; } }
 </style>
+
+<div id="bg" aria-hidden="true">
+  <svg class="doodle tl" viewBox="0 0 120 120"><use href="#doodle"/></svg>
+  <svg class="doodle tr" viewBox="0 0 120 120"><use href="#doodle"/></svg>
+  <svg width="0" height="0" style="position:absolute"><defs>
+    <g id="doodle">
+      <g stroke="#4f9a4a">
+        <path d="M8,112 C30,80 46,52 52,14"/>
+        <path d="M24,86 C12,80 8,68 12,60 C22,64 28,74 24,86Z"/>
+        <path d="M36,64 C48,58 56,60 60,68 C50,74 42,72 36,64Z"/>
+        <path d="M44,40 C34,32 34,22 38,16 C46,22 48,32 44,40Z"/>
+      </g>
+      <g stroke="#c81d47">
+        <path d="M88,40 C88,33 79,31 77,38 C75,31 66,33 66,40 C66,47 77,53 77,53 C77,53 88,47 88,40Z"/>
+        <path d="M104,74 C104,70 99,69 98,73 C97,69 92,70 92,74 C92,78 98,81 98,81 C98,81 104,78 104,74Z"/>
+      </g>
+      <g fill="#f2c46b"><circle cx="70" cy="70" r="1.8"/><circle cx="100" cy="22" r="1.5"/><circle cx="58" cy="96" r="1.4"/></g>
+    </g>
+  </defs></svg>
+</div>
 
 <div id="stage" role="button" tabindex="0" aria-label="Chạm vào hạt mầm để hoa nở">
 <svg viewBox="0 0 400 640" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
@@ -291,6 +329,14 @@ button:focus-visible { outline: 3px solid var(--leaf); outline-offset: 2px; }
       }
       sp.setAttribute('fill-opacity', o); sp.setAttribute('stroke-opacity', o);
     });
+  }
+
+  /* background petals: random lanes, negative delays so the sky is already full on load */
+  for (let i = 0; i < 16; i++) {
+    const p = document.createElement('i'), d = 9 + Math.random() * 9;
+    p.className = 'bp';
+    p.style.cssText = `left:${Math.random() * 100}%;--d:${d}s;--delay:${-Math.random() * d}s;--dx:${(Math.random() - .3) * 160}px;--r:${(Math.random() < .5 ? -1 : 1) * (240 + Math.random() * 360)}deg;scale:${.6 + Math.random() * .7}`;
+    $('bg').appendChild(p);
   }
 
   /* state */
